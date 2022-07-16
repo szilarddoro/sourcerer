@@ -11,8 +11,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@sourcerer/tsconfig": "workspace:*",
     "@types/node": "^17.0.12",
-    "tsconfig": "workspace:*",
     "tsup": "^6.1.3"
   },
   "dependencies": {

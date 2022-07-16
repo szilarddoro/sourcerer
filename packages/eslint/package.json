@@ -1,5 +1,5 @@
 {
-  "name": "eslint-config-custom",
+  "name": "@sourcerer/eslint",
   "version": "0.0.0",
   "main": "index.js",
   "license": "MIT",

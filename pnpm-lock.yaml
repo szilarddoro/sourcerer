@@ -4,22 +4,22 @@ importers:
 
   .:
     specifiers:
-      eslint-config-custom: workspace:*
+      '@sourcerer/eslint': workspace:*
       prettier: latest
       turbo: latest
     devDependencies:
-      eslint-config-custom: link:packages/eslint-config-custom
+      '@sourcerer/eslint': link:packages/eslint
       prettier: 2.7.1
       turbo: 1.3.1
 
   apps/cli:
     specifiers:
+      '@sourcerer/tsconfig': workspace:*
       '@types/node': ^17.0.12
       '@typescript-eslint/eslint-plugin': ^5.30.6
       chalk: '4'
       cross-fetch: ^3.1.5
       eslint: ^8.20.0
-      tsconfig: workspace:*
       tsup: ^6.1.3
     dependencies:
       '@typescript-eslint/eslint-plugin': 5.30.6_eslint@8.20.0
@@ -27,18 +27,19 @@ importers:
       cross-fetch: 3.1.5
       eslint: 8.20.0
     devDependencies:
+      '@sourcerer/tsconfig': link:../../packages/tsconfig
       '@types/node': 17.0.45
-      tsconfig: link:../../packages/tsconfig
       tsup: 6.1.3
 
   apps/web:
     specifiers:
       '@fontsource/inter': ^4.5.11
+      '@sourcerer/eslint': workspace:*
+      '@sourcerer/tsconfig': workspace:*
       '@types/node': ^17.0.12
       '@types/react': 17.0.37
       autoprefixer: ^10.4.7
       eslint: 7.32.0
-      eslint-config-custom: workspace:*
       next: 12.0.8
       next-transpile-modules: 9.0.0
       postcss: ^8.4.14
@@ -48,9 +49,7 @@ importers:
       react-query: 4.0.0-beta.23
       tailwind-merge: ^1.4.0
       tailwindcss: ^3.1.6
-      tsconfig: workspace:*
       typescript: ^4.5.3
-      ui: workspace:*
     dependencies:
       '@fontsource/inter': 4.5.11
       next: 12.0.8_sfoxds7t5ydpegc3knd667wn6m
@@ -59,20 +58,19 @@ importers:
       react-hook-form: 7.33.1_react@17.0.2
       react-query: 4.0.0-beta.23_sfoxds7t5ydpegc3knd667wn6m
       tailwind-merge: 1.4.0
-      ui: link:../../packages/ui
     devDependencies:
+      '@sourcerer/eslint': link:../../packages/eslint
+      '@sourcerer/tsconfig': link:../../packages/tsconfig
       '@types/node': 17.0.45
       '@types/react': 17.0.37
       autoprefixer: 10.4.7_postcss@8.4.14
       eslint: 7.32.0
-      eslint-config-custom: link:../../packages/eslint-config-custom
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
       tailwindcss: 3.1.6
-      tsconfig: link:../../packages/tsconfig
       typescript: 4.7.4
 
-  packages/eslint-config-custom:
+  packages/eslint:
     specifiers:
       eslint-config-next: ^12.0.8
       eslint-config-prettier: ^8.3.0
@@ -84,24 +82,6 @@ importers:
 
   packages/tsconfig:
     specifiers: {}
-
-  packages/ui:
-    specifiers:
-      '@types/react': ^17.0.37
-      '@types/react-dom': ^17.0.11
-      eslint: ^7.32.0
-      eslint-config-custom: workspace:*
-      react: ^17.0.2
-      tsconfig: workspace:*
-      typescript: ^4.5.2
-    devDependencies:
-      '@types/react': 17.0.47
-      '@types/react-dom': 17.0.17
-      eslint: 7.32.0
-      eslint-config-custom: link:../eslint-config-custom
-      react: 17.0.2
-      tsconfig: link:../tsconfig
-      typescript: 4.7.4
 
 packages:
 
@@ -382,22 +362,8 @@ packages:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
     dev: true
 
-  /@types/react-dom/17.0.17:
-    resolution: {integrity: sha512-VjnqEmqGnasQKV0CWLevqMTXBYG9GbwuE6x3VetERLh0cq2LTptFE73MrQi2S7GkKXCf2GgwItB/melLnxfnsg==}
-    dependencies:
-      '@types/react': 17.0.47
-    dev: true
-
   /@types/react/17.0.37:
     resolution: {integrity: sha512-2FS1oTqBGcH/s0E+CjrCCR9+JMpsu9b69RTFO+40ua43ZqP5MmQ4iUde/dMjWR909KxZwmOQIFq6AV6NjEG5xg==}
-    dependencies:
-      '@types/prop-types': 15.7.5
-      '@types/scheduler': 0.16.2
-      csstype: 3.1.0
-    dev: true
-
-  /@types/react/17.0.47:
-    resolution: {integrity: sha512-mk0BL8zBinf2ozNr3qPnlu1oyVTYq+4V7WA76RgxUAtf0Em/Wbid38KN6n4abEkvO4xMTBWmnP1FtQzgkEiJoA==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
@@ -2169,6 +2135,7 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
+    dev: false
 
   /lru-cache/6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
@@ -2682,6 +2649,7 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
+    dev: false
 
   /read-cache/1.0.0:
     resolution: {integrity: sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA==}
