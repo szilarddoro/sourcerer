@@ -1,0 +1,24 @@
+{
+  "name": "cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsup src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.12",
+    "tsconfig": "workspace:*",
+    "tsup": "^6.1.3"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
+    "chalk": "4",
+    "cross-fetch": "^3.1.5",
+    "eslint": "^8.20.0"
+  }
+}
