@@ -36,8 +36,9 @@ function processESLintOutput(output: string) {
     })
 }
 
-async function runESLintCheck() {
-  const files = await fs.readdir(CLONE_DIRECTORY, { withFileTypes: true })
+async function runESLintCheck(path: string = CLONE_DIRECTORY) {
+  const files = await fs.readdir(path, { withFileTypes: true })
+
   const hasTypeScriptConfiguration = files.some(
     (file) => file.isFile() && file.name === 'tsconfig.json'
   )
@@ -52,16 +53,14 @@ async function runESLintCheck() {
   }
 
   try {
-    const { stdout } = await executeCommand('pnpm', [
+    const { stdout, stderr } = await executeCommand('pnpm', [
       'eslint',
       '-c',
       config,
-      `${CLONE_DIRECTORY}/**/*.{js,jsx,ts,tsx}`
+      `${path}/**/*.{js,jsx,ts,tsx}`
     ])
 
-    const errorsAndWarnings = processESLintOutput(stdout[0])
-
-    console.log(errorsAndWarnings)
+    return processESLintOutput(stdout[0] || stderr[0])
   } catch (output) {
     if (output instanceof Error) {
       console.error(chalk.red(output.message))
@@ -69,28 +68,47 @@ async function runESLintCheck() {
       return
     }
 
-    const { stdout } = output as ExecuteCommandReturnType
-    const errorsAndWarnings = processESLintOutput(stdout[0])
+    const { stdout, stderr } = output as ExecuteCommandReturnType
 
-    console.log(errorsAndWarnings)
+    return processESLintOutput(stdout[0] || stderr[0])
   }
 }
 
 async function main({ logger, options }: ActionParameters) {
-  const { owner, repo } = options
+  const { owner, repo, base } = options
 
-  logger.info(`📦 Fetching repository ${owner}/${repo}...`)
+  const analyzableProjectPath = base
+    ? `${CLONE_DIRECTORY}/${base.toString().replace(/^\//, '')}`
+    : CLONE_DIRECTORY
 
-  const { html_url } = await fetchRepository(owner.toString(), repo.toString())
+  logger.info(`📦 Cloning repository ${owner}/${repo}...`)
 
-  await executeCommand('git', ['clone', html_url, CLONE_DIRECTORY])
+  try {
+    const { html_url } = await fetchRepository(
+      owner.toString(),
+      repo.toString()
+    )
+
+    await executeCommand('git', ['clone', html_url, CLONE_DIRECTORY])
+  } catch (error) {
+    logger.error(
+      `🚨 Failed to clone repository. Please check if you have access to the repository. (${owner}/${repo})`
+    )
+
+    return
+  }
 
   logger.info(`🔍 Performing analysis...`)
 
   try {
-    await runESLintCheck()
+    const result = await runESLintCheck(analyzableProjectPath)
+
+    // TODO: Process ESLint check results here
+    // Send them to the server, etc.
   } catch (error) {
-    logger.error(`ESLint check returned errors. Please check the output above.`)
+    logger.error(
+      `🚨 ESLint check failed or could not be performed. Please check the output above.`
+    )
   }
 
   await cleanup()
@@ -100,7 +118,8 @@ async function main({ logger, options }: ActionParameters) {
 
 program
   .option('-o, --owner <owner>', 'Repository owner')
-  .option('-r, --repo <repository>', 'Repository to analyze')
+  .option('-r, --repo, --repository <repository>', 'Repository to analyze')
+  .option('-p, --base <basePath>', 'Base path of project to analyze')
   .option('-v, --verbose', 'Send internal command output to console')
   .action(main)
 

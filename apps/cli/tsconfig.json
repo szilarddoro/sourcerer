@@ -3,6 +3,7 @@
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "lib": ["ES2015", "DOM"]
+    "lib": ["ES2015", "DOM"],
+    "target": "ES5"
   }
 }
