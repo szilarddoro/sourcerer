@@ -1,31 +1,80 @@
 import chalk from 'chalk'
 import { spawn } from 'child_process'
 
+export interface ExecuteCommandReturnType {
+  code: number | null
+  errors: Error[]
+  stdout: string[]
+  stderr: string[]
+}
+
 export default async function executeCommand(
   command: string,
-  ...args: readonly string[]
+  args: readonly string[],
+  options: { verbose: boolean } = { verbose: false }
 ) {
-  return new Promise<number>((resolve, reject) => {
-    const clone = spawn(command, args)
+  return new Promise<ExecuteCommandReturnType>((resolve, reject) => {
+    const spawnedCommand = spawn(command, args)
 
-    clone.on('error', (error) => {
-      console.error(chalk.red(error))
+    let errors: Error[] = []
+    let stderr: string[] = []
+    let stdout: string[] = []
+
+    spawnedCommand.on('error', (error) => {
+      if (error.message && options.verbose) {
+        console.error(chalk.red(error.message))
+      }
     })
 
-    clone.stdout.on('data', (data) => {
-      console.info(data.toString())
+    spawnedCommand.stdout.on('error', (error) => {
+      errors = errors.concat(error)
+
+      if (error.message && options.verbose) {
+        console.error(chalk.red(error.message))
+      }
     })
 
-    clone.stderr.on('data', (data) => {
-      console.error(data.toString())
+    spawnedCommand.stderr.on('error', (error) => {
+      errors = errors.concat(error)
+
+      if (error.message && options.verbose) {
+        console.error(chalk.red(error.message))
+      }
     })
 
-    clone.on('close', (code) => {
-      if (code === 0) {
-        return resolve(0)
+    spawnedCommand.stdout.on('data', (data) => {
+      const output = data.toString()
+
+      stdout = stdout.concat(output)
+
+      if (output && options.verbose) {
+        console.info(chalk.blue(output))
+      }
+    })
+
+    spawnedCommand.stderr.on('data', (data) => {
+      const output = data.toString()
+
+      stderr = stderr.concat(output)
+
+      if (output && options.verbose) {
+        console.info(chalk.blue(output))
+      }
+    })
+
+    spawnedCommand.on('close', (code) => {
+      const response: ExecuteCommandReturnType = {
+        code,
+        errors,
+        stdout,
+        stderr
       }
 
-      return reject(code)
+      if (code === 0) {
+        return resolve(response)
+      }
+
+      return reject(response)
     })
   })
 }
