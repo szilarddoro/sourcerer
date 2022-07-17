@@ -56,6 +56,8 @@ async function main({ logger, options }: ActionParameters) {
 
       await executeCommand(`git`, [`clone`, html_url, CLONE_DIRECTORY])
     } catch (error) {
+      console.error(error)
+
       logger.error(
         `🚨 Failed to clone repository. Please check if you have access to the repository. (${owner}/${repo})`
       )

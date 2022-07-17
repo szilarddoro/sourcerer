@@ -5,7 +5,12 @@ export default async function fetchRepository(
   repository: string
 ) {
   const response = await fetch(
-    `https://api.github.com/repos/${owner}/${repository}`
+    `https://api.github.com/repos/${owner}/${repository}`,
+    {
+      headers: {
+        [`Authorization`]: `token ${process.env.GITHUB_ACCESS_TOKEN}`
+      }
+    }
   )
 
   const data = await response.json()
