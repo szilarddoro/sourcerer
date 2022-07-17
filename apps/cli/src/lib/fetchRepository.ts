@@ -11,7 +11,7 @@ export default async function fetchRepository(
   const data = await response.json()
 
   if (!response.ok) {
-    throw new Error(data.message || 'Unknown error occurred')
+    throw new Error(data.message || `Unknown error occurred`)
   }
 
   return data

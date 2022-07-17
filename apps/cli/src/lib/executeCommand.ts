@@ -13,20 +13,20 @@ export default async function executeCommand(
   args: readonly string[],
   options: { verbose: boolean } = { verbose: false }
 ) {
-  return new Promise<ExecuteCommandReturnType>((resolve, reject) => {
+  return new Promise<ExecuteCommandReturnType>((resolve) => {
     const spawnedCommand = spawn(command, args)
 
     let errors: Error[] = []
     let stderr: string[] = []
     let stdout: string[] = []
 
-    spawnedCommand.on('error', (error) => {
+    spawnedCommand.on(`error`, (error) => {
       if (error.message && options.verbose) {
         console.error(chalk.red(error.message))
       }
     })
 
-    spawnedCommand.stdout.on('error', (error) => {
+    spawnedCommand.stdout.on(`error`, (error) => {
       errors = errors.concat(error)
 
       if (error.message && options.verbose) {
@@ -34,7 +34,7 @@ export default async function executeCommand(
       }
     })
 
-    spawnedCommand.stderr.on('error', (error) => {
+    spawnedCommand.stderr.on(`error`, (error) => {
       errors = errors.concat(error)
 
       if (error.message && options.verbose) {
@@ -42,7 +42,7 @@ export default async function executeCommand(
       }
     })
 
-    spawnedCommand.stdout.on('data', (data) => {
+    spawnedCommand.stdout.on(`data`, (data) => {
       const output = data.toString()
 
       stdout = stdout.concat(output)
@@ -52,7 +52,7 @@ export default async function executeCommand(
       }
     })
 
-    spawnedCommand.stderr.on('data', (data) => {
+    spawnedCommand.stderr.on(`data`, (data) => {
       const output = data.toString()
 
       stderr = stderr.concat(output)
@@ -62,19 +62,13 @@ export default async function executeCommand(
       }
     })
 
-    spawnedCommand.on('close', (code) => {
-      const response: ExecuteCommandReturnType = {
+    spawnedCommand.on(`close`, (code) => {
+      resolve({
         code,
         errors,
         stdout,
         stderr
-      }
-
-      if (code === 0) {
-        return resolve(response)
-      }
-
-      return reject(response)
+      } as ExecuteCommandReturnType)
     })
   })
 }
