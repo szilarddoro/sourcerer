@@ -2,21 +2,24 @@ import type { ActionParameters } from '@caporal/core'
 import { program } from '@caporal/core'
 import chalk from 'chalk'
 import { randomUUID } from 'crypto'
+import 'dotenv/config'
 import fs from 'fs/promises'
+import gql from 'graphql-tag'
 import { tmpdir } from 'os'
 import executeCommand from './lib/executeCommand'
 import fetchRepository from './lib/fetchRepository'
 import { lintProject } from './lib/linter'
+import { nhostClient } from './lib/nhost'
 
 /**
  * Identifier of the analysis.
  */
-const ANALYSIS_ID = randomUUID().toUpperCase()
+export const ANALYSIS_ID = randomUUID().toUpperCase()
 
 /**
  * Destination directory for the cloned repository.
  */
-const CLONE_DIRECTORY = `${tmpdir()}/sourcerer-${ANALYSIS_ID}`
+export const CLONE_DIRECTORY = `${tmpdir()}/sourcerer-${ANALYSIS_ID}`
 
 async function cleanup() {
   await fs.rm(CLONE_DIRECTORY, { recursive: true })
@@ -28,7 +31,7 @@ async function cleanup() {
 async function main({ logger, options }: ActionParameters) {
   const { owner, repo, base } = options
 
-  logger.info(`🧙 Starting (${ANALYSIS_ID})...`)
+  logger.info(`🧙 Starting analysis (${ANALYSIS_ID})...`)
 
   let projectExists = false
 
@@ -61,7 +64,7 @@ async function main({ logger, options }: ActionParameters) {
     }
   }
 
-  logger.info(`🔍 Performing analysis...`)
+  logger.info(`🔍 Looking for problems...`)
 
   try {
     const results = await lintProject(analyzableProjectPath)
@@ -76,24 +79,73 @@ async function main({ logger, options }: ActionParameters) {
       { totalErrorCount: 0, totalWarningCount: 0 }
     )
 
-    logger.info(
-      `📝 ${totalErrorCount} error(s) and ${totalWarningCount} warning(s) found.`
+    if (totalErrorCount === 0 && totalWarningCount === 0) {
+      logger.info(`🎉 No linting errors found.`)
+    } else {
+      logger.info(
+        `${
+          totalWarningCount > totalErrorCount ? `🟡` : `🔴`
+        } ${totalErrorCount} error(s) and ${totalWarningCount} warning(s) found.`
+      )
+    }
+
+    const { error: analysisError } = await nhostClient.graphql.request(
+      gql`
+        mutation AddAnalysis($object: analysis_insert_input!) {
+          insert_analysis_one(object: $object) {
+            id
+            sourcererId
+          }
+        }
+      `,
+      { object: { sourcererId: ANALYSIS_ID, owner, repository: repo } }
     )
 
-    // TODO: Process linter's results here
-    // Send them to the server, etc.
+    if (analysisError) {
+      logger.error(`🚨 Failed to save analysis.`)
 
-    logger.info(`✨ Analysis results uploaded. (ID: ${ANALYSIS_ID})`)
+      return
+    }
+
+    const { data, error: linterResultsError } =
+      await nhostClient.graphql.request(
+        gql`
+          mutation AddLinterResults($objects: [linter_results_insert_input!]!) {
+            insert_linter_results(objects: $objects) {
+              affected_rows
+            }
+          }
+        `,
+        {
+          objects: results.map((result) => ({
+            ...result,
+            analysisId: ANALYSIS_ID
+          }))
+        }
+      )
+
+    if (linterResultsError) {
+      logger.error(`🚨 Failed to save linting results.`)
+
+      return
+    }
+
+    if (data) {
+      logger.info(
+        `📝 ${data.insert_linter_results.affected_rows} linting result(s) saved.`
+      )
+    }
   } catch (error) {
     logger.error(
       `🚨 Linting failed or could not be performed. Please check the output above.`
     )
   }
+  logger.info(`✨ Analysis (${ANALYSIS_ID}) finished.`)
 }
 
 program
   .option(`-o, --owner <owner>`, `Repository owner`)
-  .option(`-r, --repo, --repository <repository>`, `Repository to analyze`)
+  .option(`-r, --repo <repository>`, `Repository to analyze`)
   .option(`-p, --base <basePath>`, `Base path of project to analyze`)
   .option(`-v, --verbose`, `Send internal command output to console`)
   .action(main)

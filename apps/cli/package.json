@@ -22,10 +22,14 @@
     "@babel/core": "^7.18.6",
     "@babel/eslint-parser": "^7.18.2",
     "@caporal/core": "^2.0.2",
+    "@nhost/nhost-js": "^1.4.6",
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.6",
     "chalk": "4",
     "cross-fetch": "^3.1.5",
-    "eslint": "^8.20.0"
+    "dotenv": "^16.0.1",
+    "eslint": "^8.20.0",
+    "graphql": "^16.5.0",
+    "graphql-tag": "^2.12.6"
   }
 }

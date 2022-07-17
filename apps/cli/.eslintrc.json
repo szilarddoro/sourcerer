@@ -13,6 +13,11 @@
   },
   "rules": {
     "quotes": ["error", "backtick"],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "ignoreRestSiblings": true }
+    ],
     "@typescript-eslint/consistent-type-imports": [
       "warn",
       { "prefer": "type-imports" }

@@ -1,5 +1,6 @@
 import chalk from 'chalk'
 import fs from 'fs/promises'
+import { CLONE_DIRECTORY } from '..'
 import type { LinterResult, SimpleLinterResult } from '../types/linter'
 import executeCommand from './executeCommand'
 
@@ -21,7 +22,10 @@ export function mapLinterResults(
 
   return results
     .filter((result) => result.errorCount > 0 || result.warningCount > 0)
-    .map(({ source, ...result }) => result)
+    .map(({ source: _source, filePath, ...result }) => ({
+      ...result,
+      filePath: filePath.replace(CLONE_DIRECTORY, ``)
+    }))
 }
 
 /**
