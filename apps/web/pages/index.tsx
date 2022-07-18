@@ -95,8 +95,6 @@ export async function getServerSideProps() {
     `
   )
 
-  console.log(error)
-
   if (error) {
     return { props: { error } }
   }
