@@ -1,13 +1,12 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
-import Button from '../components/Button'
-import Input from '../components/Input'
+import Button from '../components/ui/Button'
+import Input from '../components/ui/Input'
 
 export interface AnalyzeFormData {
   owner: string
   repository: string
-  basePath?: string
 }
 
 export default function HomePage() {
@@ -19,18 +18,16 @@ export default function HomePage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 grid grid-flow-row gap-6">
+    <div className="grid max-w-5xl grid-flow-row gap-6 px-4 py-6 mx-auto">
       <Head>
         <title>Analyze GitHub Repository</title>
       </Head>
 
-      <h1 className="font-bold text-3xl text-slate-900">
-        Analyze Github Repository
-      </h1>
+      <h1 className="text-3xl font-bold">Analyze Github Repository</h1>
 
       <form
         onSubmit={onSubmit(handleSubmit)}
-        className="grid grid-flow-row max-w-lg gap-3"
+        className="grid max-w-lg grid-flow-row gap-3"
       >
         <Input
           id="owner"
@@ -45,13 +42,6 @@ export default function HomePage() {
           label="Repository"
           required
           {...register('repository')}
-        />
-
-        <Input
-          id="basePath"
-          label="Base path"
-          placeholder="/packages/package-name"
-          {...register('basePath')}
         />
 
         <Button type="submit">Analyze</Button>

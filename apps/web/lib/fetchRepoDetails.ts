@@ -1,22 +1,17 @@
-import { QueryFunctionContext } from 'react-query'
-import { AnalyzeFormData } from '../pages'
-
-export default async function fetchRepoDetails(
-  params: QueryFunctionContext<(string | AnalyzeFormData)[]>
-) {
-  const [, variables] = params.queryKey
-
-  if (
-    typeof variables !== 'object' ||
-    !variables.owner ||
-    !variables.repository
-  ) {
+export default async function fetchRepoDetails({
+  owner,
+  repository
+}: {
+  owner: string
+  repository: string
+}) {
+  if (!owner || !repository) {
     return {}
   }
 
   try {
     const response = await fetch(
-      `https://api.github.com/repos/${variables.owner}/${variables.repository}`
+      `https://api.github.com/repos/${owner}/${repository}`
     )
 
     const data = await response.json()

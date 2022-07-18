@@ -31,6 +31,16 @@ async function cleanup() {
 async function main({ logger, options }: ActionParameters) {
   const { owner, repo, base } = options
 
+  if (!owner || !repo) {
+    logger.error(
+      `Missing required options ${chalk.red(`--owner`)} and ${chalk.red(
+        `--repo`
+      )}`
+    )
+
+    return
+  }
+
   logger.info(`🧙 Starting analysis (${ANALYSIS_ID})...`)
 
   let projectExists = false
@@ -100,7 +110,14 @@ async function main({ logger, options }: ActionParameters) {
           }
         }
       `,
-      { object: { sourcererId: ANALYSIS_ID, owner, repository: repo } }
+      {
+        object: {
+          sourcererId: ANALYSIS_ID,
+          owner,
+          repository: repo,
+          base_path: base
+        }
+      }
     )
 
     if (analysisError) {

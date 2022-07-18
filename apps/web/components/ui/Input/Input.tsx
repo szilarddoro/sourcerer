@@ -16,14 +16,14 @@ export default forwardRef(function Input(
       {label && (
         <label
           className={twMerge(
-            'text-sm font-medium text-slate-900 justify-self-start',
+            'text-sm font-medium justify-self-start',
             error && 'text-red-500'
           )}
           htmlFor={props.id}
         >
           {label}{' '}
           {!props.required && (
-            <span className="text-slate-400 font-normal text-xs">
+            <span className="text-xs font-normal text-slate-400">
               (Optional)
             </span>
           )}

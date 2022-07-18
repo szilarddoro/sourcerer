@@ -3,7 +3,10 @@
 @tailwind utilities;
 
 @layer base {
-  html {
+  html,
+  body {
     font-family: Inter, system-ui, sans-serif;
+
+    @apply text-slate-900;
   }
 }

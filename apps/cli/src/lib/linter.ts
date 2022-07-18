@@ -45,7 +45,7 @@ export async function lintProject(path: string) {
   let config = `configs/strict-javascript-eslintrc.json`
 
   if (hasTypeScriptConfiguration) {
-    console.info(chalk.blue`📝 TypeScript configuration detected.`)
+    console.info(chalk.blue`info:`, `📝 TypeScript configuration detected.`)
 
     config = `configs/strict-typescript-eslintrc.json`
   }
