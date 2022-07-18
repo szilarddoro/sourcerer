@@ -2,11 +2,9 @@ import '@fontsource/inter'
 import '@fontsource/inter/500.css'
 import '@fontsource/inter/600.css'
 import '@fontsource/inter/700.css'
-import { NhostNextProvider } from '@nhost/nextjs'
 import { AppProps } from 'next/app'
 import Head from 'next/head'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { nhostClient } from '../lib/nhostClient'
 import '../styles.css'
 
 export const queryClient = new QueryClient({
@@ -25,11 +23,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <title>Sourcerer</title>
       </Head>
 
-      <NhostNextProvider nhost={nhostClient}>
-        <QueryClientProvider client={queryClient}>
-          <Component {...pageProps} />
-        </QueryClientProvider>
-      </NhostNextProvider>
+      <QueryClientProvider client={queryClient}>
+        <Component {...pageProps} />
+      </QueryClientProvider>
     </>
   )
 }

@@ -6,20 +6,18 @@ import Analysis from '../../../components/display/Analysis'
 import Container from '../../../components/ui/Container'
 import Heading from '../../../components/ui/Heading'
 import Layout from '../../../components/ui/Layout'
-import fetchRepoDetails from '../../../lib/fetchRepoDetails'
+import fetchOrganizationDetails from '../../../lib/fetchOrganizationDetails'
 import { nhostClient } from '../../../lib/nhostClient'
 
-export interface GitHubAnalysisPageProps {
+export interface RepositoryDetailsPageProps {
   data: any[]
-  avatar: string
-  error?: any
+  organization?: any
 }
 
-export default function GitHubAnalysisPage({
-  data,
-  avatar,
-  error
-}: GitHubAnalysisPageProps) {
+export default function RepositoryDetailsPage({
+  data = [],
+  organization: { avatar_url } = {}
+}: RepositoryDetailsPageProps) {
   const {
     query: { owner, repository }
   } = useRouter()
@@ -28,10 +26,10 @@ export default function GitHubAnalysisPage({
     <Layout title={owner && repository ? `${owner}/${repository}` : ``}>
       <Container>
         <Heading className="grid items-center justify-start grid-flow-col gap-3">
-          {avatar ? (
+          {avatar_url ? (
             <img
-              src={avatar}
-              alt={`Avatar of ${owner}/${repository}`}
+              src={avatar_url}
+              alt={`Avatar of ${owner}`}
               className="overflow-hidden rounded-lg w-11 h-11"
             />
           ) : (
@@ -39,24 +37,12 @@ export default function GitHubAnalysisPage({
           )}
 
           <span>
-            <Link href={`https://github.com/${owner}`} passHref>
-              <a
-                className="hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {owner}
-              </a>
+            <Link href={`/${owner}`} passHref>
+              <a className="hover:underline">{owner}</a>
             </Link>
             /
-            <Link href={`https://github.com/${owner}/${repository}`} passHref>
-              <a
-                className="hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {repository}
-              </a>
+            <Link href={`/${owner}/${repository}`} passHref>
+              <a className="hover:underline">{repository}</a>
             </Link>
           </span>
         </Heading>
@@ -117,18 +103,23 @@ export async function getServerSideProps(context: NextPageContext) {
     }
   }
 
+  if (!data) {
+    return { props: {} }
+  }
+
   try {
-    const {
-      owner: { avatar_url }
-    } = await fetchRepoDetails({
-      owner: owner as string,
-      repository: repository as string
+    const organization = await fetchOrganizationDetails({
+      owner: owner as string
     })
 
-    return { props: { data: data.analysis, avatar: avatar_url } }
-  } catch {}
-
-  return {
-    props: { data: data.analysis }
+    return { props: { data: data.analysis || [], organization } }
+  } catch (error) {
+    console.error(error)
+    return {
+      props: {
+        error: 'Unknown error while fetching organization details.',
+        data: data.analysis || []
+      }
+    }
   }
 }

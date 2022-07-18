@@ -44,6 +44,7 @@ async function main({ logger, options }: ActionParameters) {
   logger.info(`🧙 Starting analysis (${ANALYSIS_ID})...`)
 
   let projectExists = false
+  let avatarUrl: string | null = null
 
   const analyzableProjectPath = base
     ? `${CLONE_DIRECTORY}/${base.toString().replace(/^\//, ``)}`
@@ -59,10 +60,13 @@ async function main({ logger, options }: ActionParameters) {
 
   if (!projectExists) {
     try {
-      const { html_url } = await fetchRepository(
-        owner.toString(),
-        repo.toString()
-      )
+      const {
+        html_url,
+        owner: { avatar_url }
+      } = await fetchRepository(owner.toString(), repo.toString())
+
+      // Storing avatar URL for future use
+      avatarUrl = avatar_url
 
       await executeCommand(`git`, [`clone`, html_url, CLONE_DIRECTORY])
     } catch (error) {
@@ -115,7 +119,8 @@ async function main({ logger, options }: ActionParameters) {
           sourcererId: ANALYSIS_ID,
           owner,
           repository: repo,
-          base_path: base
+          base_path: base,
+          avatar_url: avatarUrl
         }
       }
     )
@@ -151,7 +156,7 @@ async function main({ logger, options }: ActionParameters) {
 
     if (data) {
       logger.info(
-        `📝 ${data.insert_linter_results.affected_rows} linting result(s) saved.`
+        `📝 ${data.insert_linter_results.affected_rows} linting result(s) saved to the database.`
       )
     }
   } catch (error) {
