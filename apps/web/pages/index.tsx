@@ -1,51 +1,55 @@
-import Head from 'next/head'
-import { useRouter } from 'next/router'
-import { useForm } from 'react-hook-form'
-import Button from '../components/ui/Button'
-import Input from '../components/ui/Input'
+import gql from 'graphql-tag'
+import Container from '../components/ui/Container'
+import Heading from '../components/ui/Heading'
+import Layout from '../components/ui/Layout'
+import { nhostClient } from '../lib/nhostClient'
 
-export interface AnalyzeFormData {
-  owner: string
-  repository: string
+export interface IndexPageProps {
+  projectOwners: { id: string; owner: string }[]
 }
 
-export default function HomePage() {
-  const { handleSubmit: onSubmit, register } = useForm<AnalyzeFormData>()
-  const router = useRouter()
-
-  async function handleSubmit(values: AnalyzeFormData) {
-    router.push(`/${values.owner}/${values.repository}`)
-  }
+export default function IndexPage({ projectOwners }: IndexPageProps) {
+  console.log(projectOwners)
 
   return (
-    <div className="grid max-w-5xl grid-flow-row gap-6 px-4 py-6 mx-auto">
-      <Head>
-        <title>Analyze GitHub Repository</title>
-      </Head>
+    <Layout title="Home">
+      <Container>
+        <Heading variant="h1">Projects</Heading>
 
-      <h1 className="text-3xl font-bold">Analyze Github Repository</h1>
-
-      <form
-        onSubmit={onSubmit(handleSubmit)}
-        className="grid max-w-lg grid-flow-row gap-3"
-      >
-        <Input
-          id="owner"
-          label="Repository owner"
-          helperText="e.g: A user or an organization on GitHub"
-          required
-          {...register('owner')}
-        />
-
-        <Input
-          id="repository"
-          label="Repository"
-          required
-          {...register('repository')}
-        />
-
-        <Button type="submit">Analyze</Button>
-      </form>
-    </div>
+        <div className="grid grid-cols-4 gap-4">
+          {projectOwners.map(({ id, owner }) => (
+            <div
+              className="col-span-1 p-4 border-2 rounded-md dark:border-white dark:border-opacity-5 border-slate-200"
+              key={id}
+            >
+              <strong>{owner}</strong>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </Layout>
   )
+}
+
+export async function getServerSideProps() {
+  const { data, error } = await nhostClient.graphql.request(
+    gql`
+      query GetProjectOwners {
+        projectOwners: analysis(distinct_on: owner) {
+          id
+          owner
+        }
+      }
+    `
+  )
+
+  if (error) {
+    return { props: { error } }
+  }
+
+  if (data) {
+    return { props: { projectOwners: data.projectOwners } }
+  }
+
+  return { props: {} }
 }

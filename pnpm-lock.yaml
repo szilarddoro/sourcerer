@@ -66,6 +66,7 @@ importers:
       graphql: ^16.5.0
       graphql-tag: ^2.12.6
       next: 12.0.8
+      next-seo: ^5.4.0
       postcss: ^8.4.14
       react: 17.0.2
       react-dom: 17.0.2
@@ -82,6 +83,7 @@ importers:
       graphql: 16.5.0
       graphql-tag: 2.12.6_graphql@16.5.0
       next: 12.0.8_sfoxds7t5ydpegc3knd667wn6m
+      next-seo: 5.4.0_ej7h7ng32kaymulsbg6gl4bggu
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-hook-form: 7.33.1_react@17.0.2
@@ -3047,6 +3049,18 @@ packages:
 
   /natural-compare/1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+
+  /next-seo/5.4.0_ej7h7ng32kaymulsbg6gl4bggu:
+    resolution: {integrity: sha512-R9DhajPwJnR/lsF2hZ8cN8uqr5CVITsRrCG1AF5+ufcaybKYOvnH8sH9MaH4/hpkps3PQ9H71S7J7SPYixAYzQ==}
+    peerDependencies:
+      next: ^8.1.1-canary.54 || >=9.0.0
+      react: '>=16.0.0'
+      react-dom: '>=16.0.0'
+    dependencies:
+      next: 12.0.8_sfoxds7t5ydpegc3knd667wn6m
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    dev: false
 
   /next/12.0.8_sfoxds7t5ydpegc3knd667wn6m:
     resolution: {integrity: sha512-g5c1Kuh1F8tSXJn2rVvzYBzqe9EXaR6+rY3/KrQ7y0D9FueRLfHI35wM0DRadDcPSc3+vncspfhYH3jnYE/KjA==}

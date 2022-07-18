@@ -18,7 +18,7 @@ export default function Button({
   return (
     <button
       className={twMerge(
-        'inline-grid grid-flow-col gap-2 items-center bg-blue-500 hover:bg-blue-600 motion-safe:transition-all focus:bg-blue-600 focus:outline-none active:ring-4 active:ring-blue-200 text-white font-medium border-none rounded-md text-sm p-3 justify-center disabled:bg-slate-300 disabled:text-slate-500',
+        'inline-grid grid-flow-col gap-2 items-center bg-blue-500 hover:bg-blue-600 motion-safe:transition-all focus:bg-blue-600 focus:outline-none active:ring-4 active:ring-blue-200 dark:active:ring-opacity-50 text-white font-medium border-none rounded-md text-sm p-3 justify-center disabled:bg-slate-300 disabled:text-slate-500',
         className
       )}
       {...props}

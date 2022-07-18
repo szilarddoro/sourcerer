@@ -1,10 +1,13 @@
 import gql from 'graphql-tag'
 import { NextPageContext } from 'next'
-import Head from 'next/head'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Analysis from '../../../components/display/Analysis'
+import Container from '../../../components/ui/Container'
+import Heading from '../../../components/ui/Heading'
+import Layout from '../../../components/ui/Layout'
 import fetchRepoDetails from '../../../lib/fetchRepoDetails'
-import { nhostClient } from '../../_app'
+import { nhostClient } from '../../../lib/nhostClient'
 
 export interface GitHubAnalysisPageProps {
   data: any[]
@@ -22,41 +25,51 @@ export default function GitHubAnalysisPage({
   } = useRouter()
 
   return (
-    <div className="grid max-w-5xl grid-flow-row gap-6 px-4 py-6 mx-auto">
-      <Head>
-        {owner && repository ? (
-          <title>
-            {owner}/{repository} - Sourcerer
-          </title>
-        ) : (
-          <title>Sourcerer</title>
-        )}
-      </Head>
+    <Layout title={owner && repository ? `${owner}/${repository}` : ``}>
+      <Container>
+        <Heading className="grid items-center justify-start grid-flow-col gap-3">
+          {avatar ? (
+            <img
+              src={avatar}
+              alt={`Avatar of ${owner}/${repository}`}
+              className="overflow-hidden rounded-lg w-11 h-11"
+            />
+          ) : (
+            <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
+          )}
 
-      <h1 className="grid items-center justify-start grid-flow-col gap-3 text-2xl font-bold">
-        {avatar ? (
-          <img
-            src={avatar}
-            alt={`Avatar of ${owner}/${repository}`}
-            className="overflow-hidden rounded-lg w-11 h-11"
-          />
-        ) : (
-          <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
-        )}
+          <span>
+            <Link href={`https://github.com/${owner}`} passHref>
+              <a
+                className="hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {owner}
+              </a>
+            </Link>
+            /
+            <Link href={`https://github.com/${owner}/${repository}`} passHref>
+              <a
+                className="hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {repository}
+              </a>
+            </Link>
+          </span>
+        </Heading>
 
-        <span>
-          {owner}/{repository}
-        </span>
-      </h1>
-
-      <div className="grid grid-flow-row gap-4">
-        {data.length === 0 ? (
-          <p>No analysis results found.</p>
-        ) : (
-          data.map((row) => <Analysis data={row} key={row.id} />)
-        )}
-      </div>
-    </div>
+        <div className="grid grid-flow-row gap-5">
+          {data.length === 0 ? (
+            <p>No analysis results found.</p>
+          ) : (
+            data.map((row) => <Analysis data={row} key={row.id} />)
+          )}
+        </div>
+      </Container>
+    </Layout>
   )
 }
 
@@ -80,6 +93,17 @@ export async function getServerSideProps(context: NextPageContext) {
             filePath
             errorCount
             warningCount
+          }
+          linter_results_aggregate {
+            aggregate {
+              sum {
+                errorCount
+                fatalErrorCount
+                fixableErrorCount
+                fixableWarningCount
+                warningCount
+              }
+            }
           }
         }
       }

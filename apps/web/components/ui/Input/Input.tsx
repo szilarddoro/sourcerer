@@ -32,7 +32,7 @@ export default forwardRef(function Input(
 
       <input
         className={twMerge(
-          'border-2 border-slate-200 focus:border-blue-500 focus:outline-none p-3 rounded-md text-sm',
+          'border-2 border-slate-200 dark:border-white dark:border-opacity-5 dark:bg-slate-800 dark:bg-opacity-50 focus:border-blue-500 focus:outline-none p-3 rounded-md text-sm',
           error && 'border-red-500 focus:border-red-600',
           className
         )}
@@ -40,7 +40,12 @@ export default forwardRef(function Input(
         ref={ref}
       />
 
-      <p className={twMerge('text-xs text-slate-500', error && 'text-red-500')}>
+      <p
+        className={twMerge(
+          'text-xs text-slate-500 dark:text-white dark:text-opacity-50',
+          error && 'text-red-500'
+        )}
+      >
         {helperText}
       </p>
     </div>
