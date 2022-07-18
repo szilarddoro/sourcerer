@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import Link from 'next/link'
+import Card from '../components/ui/Card'
 import Chip from '../components/ui/Chip'
 import Container from '../components/ui/Container'
 import Heading from '../components/ui/Heading'
@@ -52,7 +53,10 @@ export default function IndexPage({ distinctRepositories }: IndexPageProps) {
             return (
               <Link href={`/${owner}`} passHref key={owner}>
                 <a>
-                  <div className="grid grid-flow-row col-span-1 gap-2 p-4 border-2 rounded-md justify-items-start dark:border-white dark:border-opacity-5 border-slate-200">
+                  <Card
+                    action
+                    className="grid grid-flow-row col-span-1 gap-2 justify-items-start"
+                  >
                     {data.avatar_url ? (
                       <img
                         src={data.avatar_url}
@@ -63,10 +67,10 @@ export default function IndexPage({ distinctRepositories }: IndexPageProps) {
                       <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
                     )}
 
-                    <strong>{owner}</strong>
+                    <strong className="text-lg">{owner}</strong>
 
                     <Chip>{data.repositories.length} projects</Chip>
-                  </div>
+                  </Card>
                 </a>
               </Link>
             )

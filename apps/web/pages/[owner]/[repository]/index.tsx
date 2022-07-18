@@ -6,17 +6,16 @@ import Analysis from '../../../components/display/Analysis'
 import Container from '../../../components/ui/Container'
 import Heading from '../../../components/ui/Heading'
 import Layout from '../../../components/ui/Layout'
-import fetchOrganizationDetails from '../../../lib/fetchOrganizationDetails'
 import { nhostClient } from '../../../lib/nhostClient'
 
 export interface RepositoryDetailsPageProps {
   data: any[]
-  organization?: any
+  avatar_url?: string
 }
 
 export default function RepositoryDetailsPage({
   data = [],
-  organization: { avatar_url } = {}
+  avatar_url
 }: RepositoryDetailsPageProps) {
   const {
     query: { owner, repository }
@@ -36,13 +35,17 @@ export default function RepositoryDetailsPage({
             <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
           )}
 
-          <span>
+          <span className="inline-grid grid-flow-col gap-2">
             <Link href={`/${owner}`} passHref>
-              <a className="hover:underline">{owner}</a>
+              <a className="dark:hover:text-blue-400 hover:text-blue-600 motion-safe:transition-colors">
+                {owner}
+              </a>
             </Link>
-            /
+            <span className="font-normal opacity-30">/</span>
             <Link href={`/${owner}/${repository}`} passHref>
-              <a className="hover:underline">{repository}</a>
+              <a className="dark:hover:text-blue-400 hover:text-blue-600 motion-safe:transition-colors">
+                {repository}
+              </a>
             </Link>
           </span>
         </Heading>
@@ -64,6 +67,12 @@ export async function getServerSideProps(context: NextPageContext) {
   const { data, error } = await nhostClient.graphql.request(
     gql`
       query GetAnalysisList($owner: String!, $repository: String!) {
+        avatar_urls: analysis(
+          where: { owner: { _eq: $owner } }
+          distinct_on: avatar_url
+        ) {
+          avatar_url
+        }
         analysis(
           order_by: { updated_at: desc }
           where: { owner: { _eq: $owner }, repository: { _eq: $repository } }
@@ -107,19 +116,10 @@ export async function getServerSideProps(context: NextPageContext) {
     return { props: {} }
   }
 
-  try {
-    const organization = await fetchOrganizationDetails({
-      owner: owner as string
-    })
-
-    return { props: { data: data.analysis || [], organization } }
-  } catch (error) {
-    console.error(error)
-    return {
-      props: {
-        error: 'Unknown error while fetching organization details.',
-        data: data.analysis || []
-      }
+  return {
+    props: {
+      data: data.analysis || [],
+      avatar_url: data.avatar_urls[0]?.avatar_url || null
     }
   }
 }

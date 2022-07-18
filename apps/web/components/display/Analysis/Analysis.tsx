@@ -1,3 +1,4 @@
+import Card from '../../ui/Card'
 import Chip from '../../ui/Chip'
 import Heading from '../../ui/Heading'
 import CalendarIcon from '../../ui/icons/CalendarIcon'
@@ -9,7 +10,7 @@ export interface AnalysisProps {
 export default function Analysis({
   data: {
     id,
-    created_at,
+    updated_at,
     linter_results,
     linter_results_aggregate,
     owner,
@@ -20,7 +21,7 @@ export default function Analysis({
   const formattedCreatedAt = Intl.DateTimeFormat('en', {
     dateStyle: 'long',
     timeStyle: 'short'
-  }).format(new Date(created_at))
+  }).format(new Date(updated_at))
 
   const {
     errorCount,
@@ -31,10 +32,7 @@ export default function Analysis({
   } = linter_results_aggregate.aggregate.sum
 
   return (
-    <section
-      className="grid grid-flow-row gap-2 p-4 border-2 rounded-md border-slate-200 dark:border-white dark:border-opacity-5 dark:bg-slate-800 dark:bg-opacity-50"
-      key={id}
-    >
+    <Card className="grid grid-flow-row gap-2 justify-items-start" key={id}>
       <div className="grid grid-flow-row gap-1">
         <Heading variant="h2">
           {[owner, repository, base_path].filter(Boolean).join('/')}
@@ -60,6 +58,6 @@ export default function Analysis({
           <CalendarIcon aria-label="Calendar" /> {formattedCreatedAt}
         </p>
       </div>
-    </section>
+    </Card>
   )
 }

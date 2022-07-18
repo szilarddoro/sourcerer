@@ -22,7 +22,7 @@ export default function Chip({
         level === 'error' &&
           'bg-red-100 dark:bg-red-50 text-red-500 dark:text-red-600',
         level === 'default' &&
-          'bg-slate-100 dark:bg-white dark:bg-opacity-20 text-slate-500 dark:text-white dark:text-opacity-90',
+          'bg-slate-200 dark:bg-white dark:bg-opacity-20 text-slate-600 dark:text-white dark:text-opacity-90',
         'text-xs px-2 py-1 rounded-md font-medium',
         className
       )}

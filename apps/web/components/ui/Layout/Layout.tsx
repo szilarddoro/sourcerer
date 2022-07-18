@@ -26,7 +26,7 @@ export default function Layout({
 
       <header className="fixed w-full px-4 py-4 bg-white border-b lg:px-6 dark:border-white dark:border-opacity-5 border-slate-200 dark:bg-opacity-50 dark:bg-slate-800 transform-gpu">
         <Link href="/" passHref>
-          <a className="font-medium dark:hover:text-blue-500 hover:text-blue-600 motion-safe:transition-colors">
+          <a className="font-medium dark:hover:text-blue-400 hover:text-blue-600 motion-safe:transition-colors">
             🧙 Sourcerer
           </a>
         </Link>

@@ -2,21 +2,21 @@ import gql from 'graphql-tag'
 import { NextPageContext } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import Card from '../../components/ui/Card'
 import Chip from '../../components/ui/Chip'
 import Container from '../../components/ui/Container'
 import Heading from '../../components/ui/Heading'
 import Layout from '../../components/ui/Layout'
-import fetchOrganizationDetails from '../../lib/fetchOrganizationDetails'
 import { nhostClient } from '../../lib/nhostClient'
 
 export interface OwnerDetailsPageProps {
   distinctRepositories: { id: string; owner: string; repository: string }[]
-  organization?: any
+  avatar_url?: any
 }
 
 export default function OwnerDetailsPage({
   distinctRepositories,
-  organization: { avatar_url } = {}
+  avatar_url
 }: OwnerDetailsPageProps) {
   const {
     query: { owner }
@@ -43,11 +43,14 @@ export default function OwnerDetailsPage({
           {distinctRepositories.map(({ owner, repository }) => (
             <Link href={`/${owner}/${repository}`} passHref key={repository}>
               <a>
-                <div className="grid grid-flow-row col-span-1 gap-2 p-4 border-2 rounded-md justify-items-start dark:border-white dark:border-opacity-5 border-slate-200">
-                  <strong>{repository}</strong>
+                <Card
+                  action
+                  className="grid grid-flow-row col-span-1 gap-2 justify-items-start"
+                >
+                  <strong className="text-lg">{repository}</strong>
 
                   <Chip>n/a</Chip>
-                </div>
+                </Card>
               </a>
             </Link>
           ))}
@@ -62,6 +65,12 @@ export async function getServerSideProps(context: NextPageContext) {
   const { data, error } = await nhostClient.graphql.request(
     gql`
       query GetProjectOwners($owner: String!) {
+        avatar_urls: analysis(
+          where: { owner: { _eq: $owner } }
+          distinct_on: avatar_url
+        ) {
+          avatar_url
+        }
         distinctRepositories: analysis(
           distinct_on: repository
           where: { owner: { _eq: $owner } }
@@ -83,21 +92,10 @@ export async function getServerSideProps(context: NextPageContext) {
     return { props: {} }
   }
 
-  try {
-    const organization = await fetchOrganizationDetails({
-      owner: owner as string
-    })
-
-    return {
-      props: { organization, distinctRepositories: data.distinctRepositories }
-    }
-  } catch (error) {
-    console.error(error)
-    return {
-      props: {
-        error: 'Unknown error while fetching organization details.',
-        distinctRepositories: data.distinctRepositories
-      }
+  return {
+    props: {
+      distinctRepositories: data.distinctRepositories,
+      avatar_url: data.avatar_urls[0]?.avatar_url
     }
   }
 }
