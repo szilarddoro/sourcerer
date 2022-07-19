@@ -6,4 +6,9 @@ export interface RepositoryData {
   name: string
   avatar: string
   analyses: AnalysisData[]
+  analysesAggregate: {
+    aggregate: {
+      count: number
+    }
+  }
 }
