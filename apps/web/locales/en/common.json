@@ -1,0 +1,22 @@
+{
+  "errors": {
+    "0": "No errors",
+    "1": "1 error",
+    "other": "{{count}} errors"
+  },
+  "warnings": {
+    "0": "No warnings",
+    "1": "1 warning",
+    "other": "{{count}} warnings"
+  },
+  "projects": {
+    "0": "No projects",
+    "1": "1 project",
+    "other": "{{count}} projects"
+  },
+  "analysis": {
+    "0": "No analysis",
+    "1": "1 analysis",
+    "other": "{{count}} analyses"
+  }
+}

@@ -1,41 +1,34 @@
+import useTranslation from 'next-translate/useTranslation'
+import type { AnalysisData } from '../../../types/analyses'
 import Card from '../../ui/Card'
 import Chip from '../../ui/Chip'
 import Heading from '../../ui/Heading'
 import CalendarIcon from '../../ui/icons/CalendarIcon'
 
 export interface AnalysisProps {
-  data: any
+  owner: string
+  repository: string
+  data: AnalysisData
 }
 
 export default function Analysis({
-  data: {
-    id,
-    updated_at,
-    linter_results,
-    linter_results_aggregate,
-    owner,
-    repository,
-    base_path
-  }
+  owner,
+  repository,
+  data: { id, updatedAt, lintingResultsAggregate, basePath }
 }: AnalysisProps) {
+  const { t } = useTranslation('common')
   const formattedCreatedAt = Intl.DateTimeFormat('en', {
     dateStyle: 'long',
     timeStyle: 'short'
-  }).format(new Date(updated_at))
+  }).format(new Date(updatedAt))
 
-  const {
-    errorCount,
-    warningCount,
-    fatalErrorCount,
-    fixableErrorCount,
-    fixableWarningCount
-  } = linter_results_aggregate.aggregate.sum
+  const { errorCount, warningCount } = lintingResultsAggregate.aggregate.sum
 
   return (
     <Card className="grid grid-flow-row gap-2 justify-items-start" key={id}>
       <div className="grid grid-flow-row gap-1">
         <Heading variant="h2">
-          {[owner, repository, base_path].filter(Boolean).join('/')}
+          {[owner, repository, basePath].filter(Boolean).join('/')}
         </Heading>
 
         <p className="grid items-center justify-start grid-flow-col gap-1 text-xs text-slate-500 dark:text-white dark:text-opacity-50">
@@ -44,10 +37,12 @@ export default function Analysis({
       </div>
 
       <div className="grid items-center justify-start grid-flow-col gap-2">
-        {errorCount > 0 && <Chip level="error">{errorCount} errors</Chip>}
+        {errorCount > 0 && (
+          <Chip level="error">{t('errors', { count: errorCount })}</Chip>
+        )}
 
         {warningCount > 0 && (
-          <Chip level="warning">{warningCount} warnings</Chip>
+          <Chip level="warning">{t('warnings', { count: warningCount })}</Chip>
         )}
 
         {!errorCount && !warningCount && <Chip level="success">Success</Chip>}

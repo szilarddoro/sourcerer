@@ -7,6 +7,6 @@
   body {
     font-family: Inter, system-ui, sans-serif;
 
-    @apply text-slate-900 dark:text-white bg-slate-50 dark:bg-slate-900;
+    @apply text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-900;
   }
 }

@@ -70,10 +70,8 @@ async function main({ logger, options }: ActionParameters) {
 
       await executeCommand(`git`, [`clone`, html_url, CLONE_DIRECTORY])
     } catch (error) {
-      console.error(error)
-
       logger.error(
-        `🚨 Failed to clone repository. Please check if you have access to the repository. (${owner}/${repo})`
+        `🚨 Failed to clone repository. Please check if you have access to the repository (${owner}/${repo}).`
       )
 
       return
@@ -105,37 +103,66 @@ async function main({ logger, options }: ActionParameters) {
       )
     }
 
-    const { error: analysisError } = await nhostClient.graphql.request(
+    const { data: saveRepositoryData, error: saveRepositoryError } =
+      await nhostClient.graphql.request(
+        gql`
+          mutation SaveRepository($object: repositories_insert_input!) {
+            insert_repositories_one(
+              object: $object
+              on_conflict: {
+                constraint: repositories_owner_name_key
+                update_columns: owner
+              }
+            ) {
+              id
+            }
+          }
+        `,
+        {
+          object: {
+            owner,
+            name: repo,
+            avatar: avatarUrl
+          }
+        }
+      )
+
+    if (saveRepositoryError) {
+      logger.error(`🚨 Failed to save repository.`, saveRepositoryError)
+
+      return
+    }
+
+    const { error: saveAnalysisError } = await nhostClient.graphql.request(
       gql`
-        mutation AddAnalysis($object: analysis_insert_input!) {
-          insert_analysis_one(object: $object) {
+        mutation AddAnalysis($object: analyses_insert_input!) {
+          insert_analyses_one(object: $object) {
             id
-            sourcererId
           }
         }
       `,
       {
         object: {
-          sourcererId: ANALYSIS_ID,
-          owner,
-          repository: repo,
-          base_path: base,
-          avatar_url: avatarUrl
+          id: ANALYSIS_ID,
+          basePath: base,
+          repositoryId: saveRepositoryData.insert_repositories_one.id
         }
       }
     )
 
-    if (analysisError) {
-      logger.error(`🚨 Failed to save analysis.`)
+    if (saveAnalysisError) {
+      logger.error(`🚨 Failed to save analysis.`, saveAnalysisError)
 
       return
     }
 
-    const { data, error: linterResultsError } =
+    const { data: saveLintingResultsData, error: saveLintingResultsError } =
       await nhostClient.graphql.request(
         gql`
-          mutation AddLinterResults($objects: [linter_results_insert_input!]!) {
-            insert_linter_results(objects: $objects) {
+          mutation AddLintingResults(
+            $objects: [linting_results_insert_input!]!
+          ) {
+            insert_linting_results(objects: $objects) {
               affected_rows
             }
           }
@@ -148,21 +175,22 @@ async function main({ logger, options }: ActionParameters) {
         }
       )
 
-    if (linterResultsError) {
-      logger.error(`🚨 Failed to save linting results.`)
+    if (saveLintingResultsError) {
+      logger.error(
+        `🚨 Failed to save linting results.`,
+        saveLintingResultsError
+      )
 
       return
     }
 
-    if (data) {
+    if (saveLintingResultsData) {
       logger.info(
-        `📝 ${data.insert_linter_results.affected_rows} linting result(s) saved to the database.`
+        `📝 ${saveLintingResultsData.insert_linting_results.affected_rows} linting result(s) saved to the database.`
       )
     }
   } catch (error) {
-    logger.error(
-      `🚨 Linting failed or could not be performed. Please check the output above.`
-    )
+    logger.error(`🚨 Linting failed or could not be performed.`, error)
   }
   logger.info(`✨ Analysis (${ANALYSIS_ID}) finished.`)
 }

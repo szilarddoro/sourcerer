@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import useTranslation from 'next-translate/useTranslation'
 import Link from 'next/link'
 import Card from '../components/ui/Card'
 import Chip from '../components/ui/Chip'
@@ -6,33 +7,27 @@ import Container from '../components/ui/Container'
 import Heading from '../components/ui/Heading'
 import Layout from '../components/ui/Layout'
 import { nhostClient } from '../lib/nhostClient'
+import type { RepositoryData } from '../types/repositories'
 
 export interface IndexPageProps {
-  distinctRepositories: {
-    id: string
-    owner: string
-    repository: string
-    avatar_url: string
-  }[]
+  data: RepositoryData[]
 }
 
-export default function IndexPage({ distinctRepositories }: IndexPageProps) {
-  // TODO: Move this logic to GraphQL queries
-  const distinctReposByOwner = (distinctRepositories || []).reduce(
-    (reposByOwner, { owner, repository, avatar_url }) => {
+export default function IndexPage({ data }: IndexPageProps) {
+  const { t } = useTranslation('common')
+
+  const distinctReposByOwner = data.reduce(
+    (reposByOwner, { owner, name, avatar }) => {
       if (reposByOwner.has(owner)) {
         return reposByOwner.set(owner, {
-          avatar_url,
-          repositories: [
-            ...(reposByOwner.get(owner)?.repositories || []),
-            repository
-          ]
+          avatar,
+          repositories: [...(reposByOwner.get(owner)?.repositories || []), name]
         })
       }
 
-      return reposByOwner.set(owner, { repositories: [repository], avatar_url })
+      return reposByOwner.set(owner, { repositories: [name], avatar })
     },
-    new Map<string, { repositories: string[]; avatar_url: string }>()
+    new Map<string, { repositories: string[]; avatar: string }>()
   )
 
   const distinctOwners = Array.from(distinctReposByOwner.keys())
@@ -40,9 +35,9 @@ export default function IndexPage({ distinctRepositories }: IndexPageProps) {
   return (
     <Layout title="Home">
       <Container className="gap-4">
-        <Heading variant="h1">Browse</Heading>
+        <Heading variant="h1">Browse results</Heading>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {distinctOwners.map((owner) => {
             const data = distinctReposByOwner.get(owner)
 
@@ -57,9 +52,9 @@ export default function IndexPage({ distinctRepositories }: IndexPageProps) {
                     action
                     className="grid grid-flow-row col-span-1 gap-2 justify-items-start"
                   >
-                    {data.avatar_url ? (
+                    {data.avatar ? (
                       <img
-                        src={data.avatar_url}
+                        src={data.avatar}
                         alt={`Avatar of ${owner}`}
                         className="overflow-hidden rounded-lg w-11 h-11"
                       />
@@ -69,7 +64,9 @@ export default function IndexPage({ distinctRepositories }: IndexPageProps) {
 
                     <strong className="text-lg">{owner}</strong>
 
-                    <Chip>{data.repositories.length} projects</Chip>
+                    <Chip>
+                      {t('projects', { count: data.repositories.length })}
+                    </Chip>
                   </Card>
                 </a>
               </Link>
@@ -85,26 +82,22 @@ export async function getServerSideProps() {
   const { data, error } = await nhostClient.graphql.request(
     gql`
       query GetProjectOwners {
-        distinctRepositories: analysis(distinct_on: repository) {
+        repositories: repositories(distinct_on: name) {
           id
           owner
-          repository
-          avatar_url
+          name
+          avatar
         }
       }
     `
   )
 
   if (error) {
-    return { props: { error } }
+    return { props: { error, data: [] } }
   }
 
   if (data) {
-    return {
-      props: {
-        distinctRepositories: data.distinctRepositories || []
-      }
-    }
+    return { props: { data: data.repositories } }
   }
 
   return { props: {} }

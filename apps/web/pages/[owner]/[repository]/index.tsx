@@ -7,15 +7,14 @@ import Container from '../../../components/ui/Container'
 import Heading from '../../../components/ui/Heading'
 import Layout from '../../../components/ui/Layout'
 import { nhostClient } from '../../../lib/nhostClient'
+import type { RepositoryData } from '../../../types/repositories'
 
 export interface RepositoryDetailsPageProps {
-  data: any[]
-  avatar_url?: string
+  data: RepositoryData
 }
 
 export default function RepositoryDetailsPage({
-  data = [],
-  avatar_url
+  data
 }: RepositoryDetailsPageProps) {
   const {
     query: { owner, repository }
@@ -24,10 +23,14 @@ export default function RepositoryDetailsPage({
   return (
     <Layout title={owner && repository ? `${owner}/${repository}` : ``}>
       <Container>
-        <Heading className="grid items-center justify-start grid-flow-col gap-3">
-          {avatar_url ? (
+        <Heading
+          component="h1"
+          variant="h2"
+          className="grid items-center justify-start grid-flow-col gap-3"
+        >
+          {data?.avatar ? (
             <img
-              src={avatar_url}
+              src={data?.avatar}
               alt={`Avatar of ${owner}`}
               className="overflow-hidden rounded-lg w-11 h-11"
             />
@@ -51,10 +54,17 @@ export default function RepositoryDetailsPage({
         </Heading>
 
         <div className="grid grid-flow-row gap-5">
-          {data.length === 0 ? (
+          {data?.analyses.length === 0 ? (
             <p>No analysis results found.</p>
           ) : (
-            data.map((row) => <Analysis data={row} key={row.id} />)
+            data?.analyses.map((analysis: any) => (
+              <Analysis
+                owner={owner as string}
+                repository={repository as string}
+                data={analysis}
+                key={analysis.id}
+              />
+            ))
           )}
         </div>
       </Container>
@@ -66,37 +76,26 @@ export async function getServerSideProps(context: NextPageContext) {
   const { owner, repository } = context.query
   const { data, error } = await nhostClient.graphql.request(
     gql`
-      query GetAnalysisList($owner: String!, $repository: String!) {
-        avatar_urls: analysis(
-          where: { owner: { _eq: $owner } }
-          distinct_on: avatar_url
-        ) {
-          avatar_url
-        }
-        analysis(
-          order_by: { updated_at: desc }
-          where: { owner: { _eq: $owner }, repository: { _eq: $repository } }
-        ) {
+      query GetAnalyses($owner: String!, $repository: String!) {
+        repository: repositories_by_pk(owner: $owner, name: $repository) {
           id
           owner
-          repository
-          base_path
-          created_at
-          updated_at
-          linter_results {
+          name
+          avatar
+          analyses(order_by: { updatedAt: desc }) {
             id
-            filePath
-            errorCount
-            warningCount
-          }
-          linter_results_aggregate {
-            aggregate {
-              sum {
-                errorCount
-                fatalErrorCount
-                fixableErrorCount
-                fixableWarningCount
-                warningCount
+            createdAt
+            updatedAt
+            basePath
+            lintingResultsAggregate: linting_results_aggregate {
+              aggregate {
+                sum {
+                  errorCount
+                  fatalErrorCount
+                  fixableErrorCount
+                  fixableWarningCount
+                  warningCount
+                }
               }
             }
           }
@@ -108,18 +107,17 @@ export async function getServerSideProps(context: NextPageContext) {
 
   if (error) {
     return {
-      props: { error, data: [] }
+      props: { error, repository: null }
     }
   }
 
   if (!data) {
-    return { props: {} }
+    return { props: { repository: null } }
   }
 
   return {
     props: {
-      data: data.analysis || [],
-      avatar_url: data.avatar_urls[0]?.avatar_url || null
+      data: data.repository || null
     }
   }
 }
