@@ -94,7 +94,10 @@ export async function getServerSideProps(context: NextPageContext) {
   const { data, error } = await nhostClient.graphql.request(
     gql`
       query GetRepositories($owner: String!) {
-        repositories(where: { owner: { _eq: $owner } }) {
+        repositories(
+          where: { owner: { _eq: $owner } }
+          order_by: { name: asc }
+        ) {
           id
           owner
           name

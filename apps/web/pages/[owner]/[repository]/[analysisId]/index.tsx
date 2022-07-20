@@ -96,6 +96,7 @@ export default function AnalysisDetailsPage({
               <li>Total number of warnings</li>
               <li>Total number of fixable problems</li>
               <li>Trend compared to previous analysis</li>
+              <li>Most common lint rule validation</li>
             </ul>
           </Card>
         </section>
@@ -108,7 +109,7 @@ export default function AnalysisDetailsPage({
               ({ id, filePath, errorCount, warningCount }) => {
                 return (
                   <div
-                    className="grid gap-2 pb-4 border-b border-slate-200 dark:border-white dark:border-opacity-5 last:border-none"
+                    className="grid gap-2 pb-4 border-b border-slate-200 dark:border-white dark:border-opacity-5 last:pb-0 last:border-none"
                     key={id}
                   >
                     <strong>{filePath}</strong>

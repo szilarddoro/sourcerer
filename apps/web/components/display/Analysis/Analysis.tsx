@@ -2,7 +2,6 @@ import useTranslation from 'next-translate/useTranslation'
 import type { AnalysisData } from '../../../types/analyses'
 import Card from '../../ui/Card'
 import Chip from '../../ui/Chip'
-import Heading from '../../ui/Heading'
 import CalendarIcon from '../../ui/icons/CalendarIcon'
 
 export interface AnalysisProps {
@@ -27,13 +26,13 @@ export default function Analysis({
   return (
     <Card action className="grid grid-flow-row gap-2 justify-items-start">
       <div className="grid grid-flow-row gap-1">
-        <Heading component="h2" variant="h3">
-          {[owner, repository, basePath].filter(Boolean).join('/')}
-        </Heading>
+        <strong className="text-lg">{id.split('-')[0]}</strong>
 
-        <p className="grid items-center justify-start grid-flow-col gap-1 text-xs text-slate-500 dark:text-white dark:text-opacity-50">
-          {id.split('-')[0]}
-        </p>
+        {basePath && (
+          <p className="grid items-center justify-start grid-flow-col gap-1 text-xs text-slate-500 dark:text-white dark:text-opacity-50">
+            {basePath}
+          </p>
+        )}
       </div>
 
       <div className="grid items-center justify-start grid-flow-col gap-2">
