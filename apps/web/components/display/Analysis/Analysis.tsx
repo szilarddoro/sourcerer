@@ -25,18 +25,14 @@ export default function Analysis({
   const { errorCount, warningCount } = lintingResultsAggregate.aggregate.sum
 
   return (
-    <Card
-      action
-      className="grid grid-flow-row gap-2 justify-items-start"
-      key={id}
-    >
+    <Card action className="grid grid-flow-row gap-2 justify-items-start">
       <div className="grid grid-flow-row gap-1">
         <Heading component="h2" variant="h3">
           {[owner, repository, basePath].filter(Boolean).join('/')}
         </Heading>
 
         <p className="grid items-center justify-start grid-flow-col gap-1 text-xs text-slate-500 dark:text-white dark:text-opacity-50">
-          {id}
+          {id.split('-')[0]}
         </p>
       </div>
 

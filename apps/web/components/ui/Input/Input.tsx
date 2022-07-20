@@ -12,7 +12,7 @@ export default forwardRef(function Input(
   ref: ForwardedRef<HTMLInputElement>
 ) {
   return (
-    <div className="inline-grid grid-flow-row gap-0.5">
+    <div className="inline-grid items-center grid-flow-row gap-0.5">
       {label && (
         <label
           className={twMerge(

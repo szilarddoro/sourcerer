@@ -62,7 +62,7 @@ export default function AnalysisDetailsPage({
             <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
           )}
 
-          <span className="inline-grid grid-flow-col gap-2">
+          <span className="inline-grid items-center grid-flow-col gap-2">
             <Link href={`/${owner}`} className="text-inherit">
               {owner}
             </Link>
@@ -71,6 +71,15 @@ export default function AnalysisDetailsPage({
 
             <Link href={`/${owner}/${repository}`} className="text-inherit">
               {repository}
+            </Link>
+
+            <span className="font-normal opacity-30">/</span>
+
+            <Link
+              href={`/${owner}/${repository}/${data.id}`}
+              className="text-inherit"
+            >
+              {data.id.split(`-`)[0]}
             </Link>
           </span>
         </Heading>

@@ -56,7 +56,7 @@ export default function RepositoryDetailsPage({
             <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
           )}
 
-          <span className="inline-grid grid-flow-col gap-2">
+          <span className="inline-grid items-center grid-flow-col gap-2">
             <Link href={`/${owner}`} className="text-inherit">
               {owner}
             </Link>
