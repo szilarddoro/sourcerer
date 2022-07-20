@@ -1,13 +1,13 @@
 import gql from 'graphql-tag'
 import { NextPageContext } from 'next'
 import useTranslation from 'next-translate/useTranslation'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Card from '../../components/ui/Card'
 import Chip from '../../components/ui/Chip'
 import Container from '../../components/ui/Container'
 import Heading from '../../components/ui/Heading'
 import Layout from '../../components/ui/Layout'
+import Link from '../../components/ui/Link'
 import { nhostClient } from '../../lib/nhostClient'
 import { RepositoryData } from '../../types/repositories'
 
@@ -43,30 +43,26 @@ export default function OwnerDetailsPage({
             <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
           )}
 
-          <Link href={`/${owner}`} passHref>
-            <a className="dark:hover:text-blue-400 hover:text-blue-600 motion-safe:transition-colors">
-              {owner}
-            </a>
+          <Link href={`/${owner}`} className="text-inherit">
+            {owner}
           </Link>
         </Heading>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {data.map(({ id, owner, name, analysesAggregate }) => (
-            <Link href={`/${owner}/${name}`} passHref key={id}>
-              <a>
-                <Card
-                  action
-                  className="grid grid-flow-row col-span-1 gap-2 justify-items-start"
-                >
-                  <strong className="text-lg">{name}</strong>
+            <Link href={`/${owner}/${name}`} key={id} className="text-inherit">
+              <Card
+                action
+                className="grid grid-flow-row col-span-1 gap-2 justify-items-start"
+              >
+                <strong className="text-lg">{name}</strong>
 
-                  <Chip>
-                    {t('analysis', {
-                      count: analysesAggregate.aggregate.count
-                    })}
-                  </Chip>
-                </Card>
-              </a>
+                <Chip>
+                  {t('analysis', {
+                    count: analysesAggregate.aggregate.count
+                  })}
+                </Chip>
+              </Card>
             </Link>
           ))}
         </div>

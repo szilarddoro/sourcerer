@@ -1,11 +1,11 @@
 import gql from 'graphql-tag'
 import useTranslation from 'next-translate/useTranslation'
-import Link from 'next/link'
 import Card from '../components/ui/Card'
 import Chip from '../components/ui/Chip'
 import Container from '../components/ui/Container'
 import Heading from '../components/ui/Heading'
 import Layout from '../components/ui/Layout'
+import Link from '../components/ui/Link'
 import { nhostClient } from '../lib/nhostClient'
 import type { RepositoryData } from '../types/repositories'
 
@@ -30,7 +30,7 @@ export default function IndexPage({ data }: IndexPageProps) {
     new Map<string, { repositories: string[]; avatar: string }>()
   )
 
-  const distinctOwners = Array.from(distinctReposByOwner.keys())
+  const distinctOwners = Array.from(distinctReposByOwner.keys()).sort()
 
   return (
     <Layout title="Home">
@@ -46,29 +46,27 @@ export default function IndexPage({ data }: IndexPageProps) {
             }
 
             return (
-              <Link href={`/${owner}`} passHref key={owner}>
-                <a>
-                  <Card
-                    action
-                    className="grid grid-flow-row col-span-1 gap-2 justify-items-start"
-                  >
-                    {data.avatar ? (
-                      <img
-                        src={data.avatar}
-                        alt={`Avatar of ${owner}`}
-                        className="overflow-hidden rounded-lg w-11 h-11"
-                      />
-                    ) : (
-                      <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
-                    )}
+              <Link href={`/${owner}`} key={owner}>
+                <Card
+                  action
+                  className="grid grid-flow-row col-span-1 gap-2 justify-items-start"
+                >
+                  {data.avatar ? (
+                    <img
+                      src={data.avatar}
+                      alt={`Avatar of ${owner}`}
+                      className="overflow-hidden rounded-lg w-11 h-11"
+                    />
+                  ) : (
+                    <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
+                  )}
 
-                    <strong className="text-lg">{owner}</strong>
+                  <strong className="text-lg">{owner}</strong>
 
-                    <Chip>
-                      {t('projects', { count: data.repositories.length })}
-                    </Chip>
-                  </Card>
-                </a>
+                  <Chip>
+                    {t('projects', { count: data.repositories.length })}
+                  </Chip>
+                </Card>
               </Link>
             )
           })}

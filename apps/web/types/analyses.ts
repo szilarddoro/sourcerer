@@ -4,7 +4,8 @@ export interface AnalysisData {
   id: string
   createdAt: string
   updatedAt: string
-  basePath: string
+  basePath?: string
+  gitBranch?: string
   lintingResults: LintingResultData[]
   lintingResultsAggregate: {
     aggregate: {
