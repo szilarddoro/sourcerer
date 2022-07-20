@@ -6,6 +6,7 @@ export interface AnalysisData {
   updatedAt: string
   basePath?: string
   gitBranch?: string
+  gitCommitHash?: string
   lintingResults: LintingResultData[]
   lintingResultsAggregate: {
     aggregate: {

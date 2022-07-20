@@ -37,7 +37,7 @@ export default function IndexPage({ data }: IndexPageProps) {
       <Container className="gap-4">
         <Heading variant="h1">Browse results</Heading>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {distinctOwners.map((owner) => {
             const data = distinctReposByOwner.get(owner)
 

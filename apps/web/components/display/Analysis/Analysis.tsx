@@ -25,9 +25,13 @@ export default function Analysis({
   const { errorCount, warningCount } = lintingResultsAggregate.aggregate.sum
 
   return (
-    <Card className="grid grid-flow-row gap-2 justify-items-start" key={id}>
+    <Card
+      action
+      className="grid grid-flow-row gap-2 justify-items-start"
+      key={id}
+    >
       <div className="grid grid-flow-row gap-1">
-        <Heading variant="h2">
+        <Heading component="h2" variant="h3">
           {[owner, repository, basePath].filter(Boolean).join('/')}
         </Heading>
 
@@ -49,7 +53,7 @@ export default function Analysis({
       </div>
 
       <div className="grid justify-start grid-flow-col gap-4 opacity-80">
-        <p className="grid items-center justify-start grid-flow-col gap-1 text-xs">
+        <p className="grid items-center justify-start grid-flow-col gap-1 text-xs text-slate-900 dark:text-white">
           <CalendarIcon aria-label="Calendar" /> {formattedCreatedAt}
         </p>
       </div>

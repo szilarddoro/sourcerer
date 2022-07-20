@@ -14,16 +14,34 @@ import { RepositoryData } from '../../types/repositories'
 export interface OwnerDetailsPageProps {
   data: RepositoryData[]
   avatar?: string
+  notFound?: boolean
 }
 
 export default function OwnerDetailsPage({
   data,
-  avatar
+  avatar,
+  notFound
 }: OwnerDetailsPageProps) {
   const { t } = useTranslation('common')
   const {
     query: { owner }
   } = useRouter()
+
+  if (!data || notFound) {
+    return (
+      <Layout>
+        <Container className="justify-items-start">
+          <Heading>Not Found</Heading>
+
+          <p>This owner does not exist.</p>
+
+          <Link href="/" className="text-sm text-blue-500 dark:text-blue-300">
+            Go back to home page
+          </Link>
+        </Container>
+      </Layout>
+    )
+  }
 
   return (
     <Layout title={(owner as string) || ''}>
@@ -48,7 +66,7 @@ export default function OwnerDetailsPage({
           </Link>
         </Heading>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {data.map(({ id, owner, name, analysesAggregate }) => (
             <Link href={`/${owner}/${name}`} key={id} className="text-inherit">
               <Card
@@ -102,8 +120,8 @@ export async function getServerSideProps(context: NextPageContext) {
     return { props: { error, data: [] } }
   }
 
-  if (!data) {
-    return { props: { data: [] } }
+  if (data && data.repositories.length === 0) {
+    return { props: { data: [], notFound: true } }
   }
 
   return {

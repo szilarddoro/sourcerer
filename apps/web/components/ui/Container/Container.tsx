@@ -12,7 +12,7 @@ export default function Container({
   return (
     <div
       className={twMerge(
-        'grid max-w-7xl grid-flow-row gap-6 px-4 lg:px-6 py-6 mx-auto',
+        'grid max-w-5xl grid-flow-row gap-6 px-4 lg:px-6 py-6 mx-auto',
         className
       )}
       {...props}

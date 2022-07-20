@@ -22,18 +22,17 @@ export default function RepositoryDetailsPage({
     query: { owner, repository }
   } = useRouter()
 
-  console.log(notFound)
-
-  if (notFound) {
+  if (!data || notFound) {
     return (
       <Layout>
-        <Container>
+        <Container className="justify-items-start">
           <Heading>Not Found</Heading>
 
-          <p>
-            This repository does not exist.{' '}
-            <Link href="/">Go back to home page</Link>
-          </p>
+          <p>This repository does not exist.</p>
+
+          <Link href="/" className="text-sm text-blue-500 dark:text-blue-300">
+            Go back to home page
+          </Link>
         </Container>
       </Layout>
     )
@@ -47,9 +46,9 @@ export default function RepositoryDetailsPage({
           variant="h2"
           className="grid items-center justify-start grid-flow-col gap-3"
         >
-          {data?.avatar ? (
+          {data.avatar ? (
             <img
-              src={data?.avatar}
+              src={data.avatar}
               alt={`Avatar of ${owner}`}
               className="overflow-hidden rounded-lg w-11 h-11"
             />
@@ -71,16 +70,20 @@ export default function RepositoryDetailsPage({
         </Heading>
 
         <div className="grid grid-flow-row gap-5">
-          {data?.analyses.length === 0 ? (
+          {data.analyses.length === 0 ? (
             <p className="text-slate-500">No analysis results found.</p>
           ) : (
-            data?.analyses.map((analysis: any) => (
-              <Analysis
-                owner={owner as string}
-                repository={repository as string}
-                data={analysis}
+            data.analyses.map((analysis) => (
+              <Link
+                href={`/${owner}/${repository}/${analysis.id}`}
                 key={analysis.id}
-              />
+              >
+                <Analysis
+                  owner={owner as string}
+                  repository={repository as string}
+                  data={analysis}
+                />
+              </Link>
             ))
           )}
         </div>
