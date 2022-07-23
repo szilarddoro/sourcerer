@@ -44,7 +44,7 @@ export default function RepositoryDetailsPage({
         <Heading
           component="h1"
           variant="h2"
-          className="grid items-center justify-start grid-flow-col gap-3"
+          className="grid items-center justify-start gap-3 sm:grid-flow-col"
         >
           {data.avatar ? (
             <img
@@ -78,11 +78,7 @@ export default function RepositoryDetailsPage({
                 href={`/${owner}/${repository}/${analysis.id}`}
                 key={analysis.id}
               >
-                <Analysis
-                  owner={owner as string}
-                  repository={repository as string}
-                  data={analysis}
-                />
+                <Analysis data={analysis} />
               </Link>
             ))
           )}
@@ -107,6 +103,7 @@ export async function getServerSideProps(context: NextPageContext) {
             createdAt
             updatedAt
             basePath
+            gitBranch
             lintingResultsAggregate: linting_results_aggregate {
               aggregate {
                 sum {

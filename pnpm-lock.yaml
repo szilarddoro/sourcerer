@@ -69,6 +69,7 @@ importers:
       next: 12.2.2
       next-seo: ^5.4.0
       next-translate: ^1.5.0
+      nextjs-progressbar: ^0.0.14
       postcss: ^8.4.14
       react: 17.0.2
       react-dom: 17.0.2
@@ -88,6 +89,7 @@ importers:
       next: 12.2.2_sfoxds7t5ydpegc3knd667wn6m
       next-seo: 5.4.0_6s32wxz5ps7aqzzuo7qur6i26m
       next-translate: 1.5.0_next@12.2.2+react@17.0.2
+      nextjs-progressbar: 0.0.14_next@12.2.2+react@17.0.2
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-hook-form: 7.33.1_react@17.0.2
@@ -3129,6 +3131,18 @@ packages:
       - babel-plugin-macros
     dev: false
 
+  /nextjs-progressbar/0.0.14_next@12.2.2+react@17.0.2:
+    resolution: {integrity: sha512-AXYXHDN6M52AwFnGqH/vlwyo0gbC9zM7QS/4ryOTI0RUqfze5FJl8uSrxKJMzK6hGFdDeQXcZoWsLGXeCVtTwg==}
+    peerDependencies:
+      next: '>= 6.0.0'
+      react: '>= 16.0.0'
+    dependencies:
+      next: 12.2.2_sfoxds7t5ydpegc3knd667wn6m
+      nprogress: 0.2.0
+      prop-types: 15.8.1
+      react: 17.0.2
+    dev: false
+
   /node-fetch/2.6.7:
     resolution: {integrity: sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==}
     engines: {node: 4.x || >=6.0.0}
@@ -3160,6 +3174,10 @@ packages:
     dependencies:
       path-key: 3.1.1
     dev: true
+
+  /nprogress/0.2.0:
+    resolution: {integrity: sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==}
+    dev: false
 
   /object-assign/4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}

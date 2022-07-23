@@ -49,7 +49,7 @@ export default function OwnerDetailsPage({
         <Heading
           component="h1"
           variant="h2"
-          className="grid items-center justify-start grid-flow-col gap-3"
+          className="grid items-center justify-start gap-3 sm:grid-flow-col"
         >
           {avatar ? (
             <img

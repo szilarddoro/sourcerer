@@ -18,6 +18,7 @@ export default function CalendarIcon({
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      aria-label="Calendar"
       className={twMerge('text-slate-500 dark:text-white', className)}
       {...props}
     >

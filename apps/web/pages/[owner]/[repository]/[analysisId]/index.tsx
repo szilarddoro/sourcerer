@@ -50,7 +50,7 @@ export default function AnalysisDetailsPage({
         <Heading
           component="h1"
           variant="h2"
-          className="grid items-center justify-start grid-flow-col gap-3"
+          className="grid items-center justify-start gap-3 sm:grid-flow-col"
         >
           {repositoryData?.avatar ? (
             <img
@@ -62,7 +62,7 @@ export default function AnalysisDetailsPage({
             <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
           )}
 
-          <span className="inline-grid items-center grid-flow-col gap-2">
+          <span className="inline-grid items-center grid-flow-col gap-2 text-base sm:text-xl">
             <Link href={`/${owner}`} className="text-inherit">
               {owner}
             </Link>
@@ -112,7 +112,7 @@ export default function AnalysisDetailsPage({
                     className="grid gap-2 pb-4 border-b border-slate-200 dark:border-white dark:border-opacity-5 last:pb-0 last:border-none"
                     key={id}
                   >
-                    <strong>{filePath}</strong>
+                    <strong className="break-all">{filePath}</strong>
 
                     {(errorCount > 0 || warningCount > 0) && (
                       <div className="grid items-center justify-start grid-flow-col gap-2">

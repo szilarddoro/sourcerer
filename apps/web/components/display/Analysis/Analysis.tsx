@@ -3,20 +3,20 @@ import type { AnalysisData } from '../../../types/analyses'
 import Card from '../../ui/Card'
 import Chip from '../../ui/Chip'
 import CalendarIcon from '../../ui/icons/CalendarIcon'
+import FolderIcon from '../../ui/icons/FolderIcon'
+import GitBranchIcon from '../../ui/icons/GitBranchIcon'
+import LabelledIcon from '../LabelledIcon'
 
 export interface AnalysisProps {
-  owner: string
-  repository: string
   data: AnalysisData
 }
 
 export default function Analysis({
-  owner,
-  repository,
-  data: { id, updatedAt, lintingResultsAggregate, basePath }
+  data: { id, updatedAt, lintingResultsAggregate, basePath, gitBranch }
 }: AnalysisProps) {
   const { t } = useTranslation('common')
-  const formattedCreatedAt = Intl.DateTimeFormat('en', {
+
+  const formattedCreatedAt = Intl.DateTimeFormat('en-US', {
     dateStyle: 'long',
     timeStyle: 'short'
   }).format(new Date(updatedAt))
@@ -28,11 +28,15 @@ export default function Analysis({
       <div className="grid grid-flow-row gap-1">
         <strong className="text-lg">{id.split('-')[0]}</strong>
 
-        {basePath && (
-          <p className="grid items-center justify-start grid-flow-col gap-1 text-xs text-slate-500 dark:text-white dark:text-opacity-50">
-            {basePath}
-          </p>
-        )}
+        <div className="grid grid-flow-col gap-3">
+          {gitBranch && (
+            <LabelledIcon icon={<GitBranchIcon />}>{gitBranch}</LabelledIcon>
+          )}
+
+          {basePath && (
+            <LabelledIcon icon={<FolderIcon />}>{basePath}</LabelledIcon>
+          )}
+        </div>
       </div>
 
       <div className="grid items-center justify-start grid-flow-col gap-2">
@@ -47,11 +51,7 @@ export default function Analysis({
         {!errorCount && !warningCount && <Chip level="success">Success</Chip>}
       </div>
 
-      <div className="grid justify-start grid-flow-col gap-4 opacity-80">
-        <p className="grid items-center justify-start grid-flow-col gap-1 text-xs text-slate-900 dark:text-white">
-          <CalendarIcon aria-label="Calendar" /> {formattedCreatedAt}
-        </p>
-      </div>
+      <LabelledIcon icon={<CalendarIcon />}>{formattedCreatedAt}</LabelledIcon>
     </Card>
   )
 }

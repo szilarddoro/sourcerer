@@ -4,6 +4,7 @@ import '@fontsource/inter/600.css'
 import '@fontsource/inter/700.css'
 import { AppProps } from 'next/app'
 import Head from 'next/head'
+import NextNProgress from 'nextjs-progressbar'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import '../styles.css'
 
@@ -14,6 +15,8 @@ export const queryClient = new QueryClient({
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
+      <NextNProgress startPosition={0.2} height={2} color="#3b82f6" />
+
       <Head>
         <link
           rel="icon"

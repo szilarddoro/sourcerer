@@ -45,6 +45,7 @@ async function main({ logger, options }: ActionParameters) {
 
   let projectExists = false
   let avatarUrl: string | null = null
+  let currentBranch: string | null = null
 
   const analyzableProjectPath = base
     ? `${CLONE_DIRECTORY}/${base.toString().replace(/^\//, ``)}`
@@ -69,6 +70,15 @@ async function main({ logger, options }: ActionParameters) {
       avatarUrl = avatar_url
 
       await executeCommand(`git`, [`clone`, html_url, CLONE_DIRECTORY])
+
+      const { stdout, stderr } = await executeCommand(`git`, [
+        `branch`,
+        `--show-current`
+      ])
+
+      const [branch] = stdout || stderr
+
+      currentBranch = branch.replace(/(\n)+/gi, ``)
     } catch (error) {
       logger.error(
         `🚨 Failed to clone repository. Please check if you have access to the repository (${owner}/${repo}).`
@@ -145,6 +155,7 @@ async function main({ logger, options }: ActionParameters) {
         object: {
           id: ANALYSIS_ID,
           basePath: base,
+          gitBranch: currentBranch,
           repositoryId: saveRepositoryData.insert_repositories_one.id
         }
       }
