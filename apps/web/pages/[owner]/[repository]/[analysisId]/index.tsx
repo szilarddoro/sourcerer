@@ -24,7 +24,7 @@ export interface AnalysisDetailsPageProps {
 function ExternalLink(props: LinkProps) {
   return (
     <Link
-      className="text-blue-500 dark:text-blue-300 hover:underline"
+      className="text-sm text-blue-500 dark:text-blue-300 hover:underline"
       target="_blank"
       rel="noopener noreferrer"
       onClick={(event) => event.stopPropagation()}
@@ -113,7 +113,7 @@ export default function AnalysisDetailsPage({
                     {data.gitBranch}
                   </ExternalLink>{' '}
                   {data.gitCommitHash && (
-                    <span>
+                    <span className="text-sm">
                       (
                       <ExternalLink
                         href={`${githubBasePath}/tree/${data.gitCommitHash}`}
@@ -150,9 +150,13 @@ export default function AnalysisDetailsPage({
         </section>
 
         <section className="grid gap-2">
-          <Heading variant="h2">Problems</Heading>
+          <Heading variant="h2">Results</Heading>
 
           <Card className="grid grid-flow-row gap-4">
+            {data.lintingResults.length === 0 && (
+              <p>🎉 This version didn't violate any linting rules.</p>
+            )}
+
             {data.lintingResults.map(
               ({ id, filePath, errorCount, warningCount }) => {
                 return (

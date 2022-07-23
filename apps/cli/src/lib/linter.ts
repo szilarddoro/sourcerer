@@ -57,11 +57,13 @@ export async function lintProject(path: string) {
   const { stdout, stderr } = await executeCommand(`pnpm`, [
     `eslint`,
     `--no-eslintrc`,
-    `-c`,
+    `--config`,
     config,
     `--format`,
     `json`,
-    `${path}/**/*.{js,jsx,ts,tsx}`
+    `${path}`,
+    `--ext`,
+    `.ts,.tsx,.js,.jsx`
   ])
 
   return mapLinterResults(stdout.join(``) || stderr.join(``))

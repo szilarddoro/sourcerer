@@ -15,7 +15,12 @@ export const queryClient = new QueryClient({
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <NextNProgress startPosition={0.2} height={2} color="#3b82f6" />
+      <NextNProgress
+        startPosition={0.2}
+        height={2}
+        color="#3b82f6"
+        options={{ showSpinner: false }}
+      />
 
       <Head>
         <link
