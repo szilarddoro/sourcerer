@@ -50,6 +50,10 @@ export async function lintProject(path: string) {
     config = `configs/strict-typescript-eslintrc.json`
   }
 
+  // TODO: Take .eslintignore into account
+  // TODO: Take the project's ESLint configuration into account - override rules
+  // with Sourcerer's strict ESLint rules
+
   const { stdout, stderr } = await executeCommand(`pnpm`, [
     `eslint`,
     `--no-eslintrc`,

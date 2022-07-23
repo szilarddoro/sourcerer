@@ -104,6 +104,7 @@ export async function getServerSideProps(context: NextPageContext) {
             updatedAt
             basePath
             gitBranch
+            gitCommitHash
             lintingResultsAggregate: linting_results_aggregate {
               aggregate {
                 sum {

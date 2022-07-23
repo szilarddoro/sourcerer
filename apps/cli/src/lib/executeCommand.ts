@@ -11,10 +11,13 @@ export interface ExecuteCommandReturnType {
 export default async function executeCommand(
   command: string,
   args: readonly string[],
-  options: { verbose: boolean } = { verbose: false }
+  options: { verbose?: boolean; cwd?: string } = {
+    verbose: false,
+    cwd: process.cwd()
+  }
 ) {
   return new Promise<ExecuteCommandReturnType>((resolve) => {
-    const spawnedCommand = spawn(command, args)
+    const spawnedCommand = spawn(command, args, { cwd: options.cwd })
 
     let errors: Error[] = []
     let stderr: string[] = []

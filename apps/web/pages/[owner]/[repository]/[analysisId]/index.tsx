@@ -2,12 +2,15 @@ import gql from 'graphql-tag'
 import { NextPageContext } from 'next'
 import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
+import LabelledIcon from '../../../../components/display/LabelledIcon'
 import Card from '../../../../components/ui/Card'
 import Chip from '../../../../components/ui/Chip'
 import Container from '../../../../components/ui/Container'
 import Heading from '../../../../components/ui/Heading'
+import FolderIcon from '../../../../components/ui/icons/FolderIcon'
+import GitBranchIcon from '../../../../components/ui/icons/GitBranchIcon'
 import Layout from '../../../../components/ui/Layout'
-import Link from '../../../../components/ui/Link'
+import Link, { LinkProps } from '../../../../components/ui/Link'
 import { nhostClient } from '../../../../lib/nhostClient'
 import { AnalysisData } from '../../../../types/analyses'
 import { RepositoryData } from '../../../../types/repositories'
@@ -16,6 +19,18 @@ export interface AnalysisDetailsPageProps {
   data?: AnalysisData
   repositoryData?: RepositoryData
   notFound?: boolean
+}
+
+function ExternalLink(props: LinkProps) {
+  return (
+    <Link
+      className="text-blue-500 dark:text-blue-300 hover:underline"
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={(event) => event.stopPropagation()}
+      {...props}
+    />
+  )
 }
 
 export default function AnalysisDetailsPage({
@@ -27,6 +42,7 @@ export default function AnalysisDetailsPage({
   const {
     query: { owner, repository }
   } = useRouter()
+  const githubBasePath = `https://github.com/${owner}/${repository}`
 
   if (!repositoryData || !data || notFound) {
     return (
@@ -85,13 +101,45 @@ export default function AnalysisDetailsPage({
         </Heading>
 
         <section className="grid gap-2">
-          <Heading variant="h2">Analysis details</Heading>
+          <Heading variant="h2">Details</Heading>
 
-          <Card>
+          <Card className="grid gap-2">
+            <div className="grid justify-start grid-flow-col gap-2">
+              {data.gitBranch && (
+                <LabelledIcon icon={<GitBranchIcon />}>
+                  <ExternalLink
+                    href={`${githubBasePath}/tree/${data.gitBranch}`}
+                  >
+                    {data.gitBranch}
+                  </ExternalLink>{' '}
+                  {data.gitCommitHash && (
+                    <span>
+                      (
+                      <ExternalLink
+                        href={`${githubBasePath}/tree/${data.gitCommitHash}`}
+                      >
+                        {data.gitCommitHash}
+                      </ExternalLink>
+                      )
+                    </span>
+                  )}
+                </LabelledIcon>
+              )}
+
+              {data.basePath && (
+                <LabelledIcon icon={<FolderIcon />}>
+                  <ExternalLink
+                    href={`${githubBasePath}/tree/${
+                      data.gitCommitHash || data.gitBranch
+                    }/${data.basePath}`}
+                  >
+                    {data.basePath}
+                  </ExternalLink>
+                </LabelledIcon>
+              )}
+            </div>
+
             <ul>
-              <li>Commit hash</li>
-              <li>Git branch</li>
-              <li>Base path</li>
               <li>Total number of errors</li>
               <li>Total number of warnings</li>
               <li>Total number of fixable problems</li>

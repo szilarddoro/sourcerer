@@ -45,7 +45,8 @@ async function main({ logger, options }: ActionParameters) {
 
   let projectExists = false
   let avatarUrl: string | null = null
-  let currentBranch: string | null = null
+  let currentGitBranch: string | null = null
+  let currentGitCommitHash: string | null = null
 
   const analyzableProjectPath = base
     ? `${CLONE_DIRECTORY}/${base.toString().replace(/^\//, ``)}`
@@ -71,17 +72,27 @@ async function main({ logger, options }: ActionParameters) {
 
       await executeCommand(`git`, [`clone`, html_url, CLONE_DIRECTORY])
 
-      const { stdout, stderr } = await executeCommand(`git`, [
-        `branch`,
-        `--show-current`
-      ])
+      const { stdout: gitBranchStdout, stderr: gitBranchStderr } =
+        await executeCommand(`git`, [`branch`, `--show-current`], {
+          cwd: CLONE_DIRECTORY
+        })
 
-      const [branch] = stdout || stderr
+      const [branch] = gitBranchStdout || gitBranchStderr
 
-      currentBranch = branch.replace(/(\n)+/gi, ``)
+      currentGitBranch = branch?.replace(/(\n)+/gi, ``)
+
+      const { stdout: commitHashStdout, stderr: commitHashStderr } =
+        await executeCommand(`git`, [`rev-parse`, `--short`, `HEAD`], {
+          cwd: CLONE_DIRECTORY
+        })
+
+      const [commitHash] = commitHashStdout || commitHashStderr
+
+      currentGitCommitHash = commitHash?.replace(/(\n)+/gi, ``)
     } catch (error) {
       logger.error(
-        `🚨 Failed to clone repository. Please check if you have access to the repository (${owner}/${repo}).`
+        `🚨 Failed to clone repository. Please check if you have access to the repository (${owner}/${repo}).`,
+        error
       )
 
       return
@@ -155,7 +166,8 @@ async function main({ logger, options }: ActionParameters) {
         object: {
           id: ANALYSIS_ID,
           basePath: base,
-          gitBranch: currentBranch,
+          gitBranch: currentGitBranch,
+          gitCommitHash: currentGitCommitHash,
           repositoryId: saveRepositoryData.insert_repositories_one.id
         }
       }

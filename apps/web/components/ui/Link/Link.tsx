@@ -11,7 +11,12 @@ export interface LinkProps
   href: string | UrlObject
 }
 
-export default function Link({ href, children, className }: LinkProps) {
+export default function Link({
+  href,
+  children,
+  className,
+  ...props
+}: LinkProps) {
   return (
     <NextLink href={href} passHref>
       <a
@@ -19,6 +24,7 @@ export default function Link({ href, children, className }: LinkProps) {
           'dark:hover:text-blue-400 hover:text-blue-600 motion-safe:transition-colors',
           className
         )}
+        {...props}
       >
         {children}
       </a>
