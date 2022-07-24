@@ -35,7 +35,37 @@ export function mapLinterResults(
  * @returns Results of the linter.
  */
 export async function lintProject(path: string) {
+  let esLintConfigurationAvailable = false
+
   const files = await fs.readdir(path, { withFileTypes: true })
+
+  const hasESLintFileInRoot = files.some(
+    (file) => file.isFile() && file.name.startsWith(`.eslintrc`)
+  )
+
+  if (hasESLintFileInRoot) {
+    esLintConfigurationAvailable = true
+  } else {
+    const isPackageAvailable = files.some(
+      (file) => file.isFile() && file.name === `package.json`
+    )
+
+    if (isPackageAvailable) {
+      const packageJsonBuffer = await fs.readFile(`${path}/package.json`, {
+        encoding: `utf-8`
+      })
+
+      const { eslintConfig } = JSON.parse(packageJsonBuffer.toString())
+
+      if (eslintConfig) {
+        esLintConfigurationAvailable = true
+      }
+    }
+  }
+
+  if (esLintConfigurationAvailable) {
+    console.info(chalk.blue`info:`, `📝 ESLint configuration detected.`)
+  }
 
   const hasTypeScriptConfiguration = files.some(
     (file) => file.isFile() && file.name === `tsconfig.json`

@@ -8,6 +8,7 @@ import gql from 'graphql-tag'
 import { tmpdir } from 'os'
 import executeCommand from './lib/executeCommand'
 import fetchRepository from './lib/fetchRepository'
+import installDependencies from './lib/installDependencies'
 import { lintProject } from './lib/linter'
 import { nhostClient } from './lib/nhost'
 
@@ -97,6 +98,16 @@ async function main({ logger, options }: ActionParameters) {
 
       return
     }
+  }
+
+  logger.info(`📦 Installing dependencies...`)
+
+  try {
+    await installDependencies(analyzableProjectPath)
+  } catch (error) {
+    logger.error(`🚨 Failed to install dependencies.`, error)
+
+    return
   }
 
   logger.info(`🔍 Looking for problems...`)
@@ -213,8 +224,9 @@ async function main({ logger, options }: ActionParameters) {
       )
     }
   } catch (error) {
-    logger.error(`🚨 Linting failed or could not be performed.`, error)
+    logger.error(`🚨 Analysis failed or could not be performed.`, error)
   }
+
   logger.info(`✨ Analysis (${ANALYSIS_ID}) finished.`)
 }
 
