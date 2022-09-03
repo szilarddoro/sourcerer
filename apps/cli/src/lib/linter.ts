@@ -87,6 +87,8 @@ export async function lintProject(path: string) {
   }
 
   if (esLintConfigurationAvailable) {
+    // TODO: Install dependencies in this case and use the project's ESLint
+    // configuration, skip using AirBnb's configuration.
     console.info(chalk.blue`info:`, '📝 ESLint configuration detected.');
   }
 

@@ -9,6 +9,7 @@ import executeCommand from './lib/executeCommand';
 import fetchRepository from './lib/fetchRepository';
 import { lintProject } from './lib/linter';
 import nhostClient from './lib/nhostClient';
+import { StoredLinterResult } from './types/linter';
 
 async function cleanup() {
   await fs.rm(CLONE_DIRECTORY, { recursive: true });
@@ -93,23 +94,40 @@ async function main({ logger, options }: ActionParameters) {
   try {
     const results = await lintProject(analyzableProjectPath);
 
-    const { totalErrorCount, totalWarningCount } = results.reduce(
+    const {
+      fatalErrorCount,
+      errorCount,
+      fixableErrorCount,
+      warningCount,
+      fixableWarningCount,
+    } = results.reduce(
       (errorsAndWarnings, result) => ({
         ...errorsAndWarnings,
-        totalErrorCount: errorsAndWarnings.totalErrorCount + result.errorCount,
-        totalWarningCount:
-          errorsAndWarnings.totalWarningCount + result.warningCount,
+        fatalErrorCount:
+          errorsAndWarnings.fatalErrorCount + result.fatalErrorCount,
+        errorCount: errorsAndWarnings.errorCount + result.errorCount,
+        fixableErrorCount:
+          errorsAndWarnings.fixableErrorCount + result.fixableErrorCount,
+        warningCount: errorsAndWarnings.warningCount + result.warningCount,
+        fixableWarningCount:
+          errorsAndWarnings.fixableWarningCount + result.fixableWarningCount,
       }),
-      { totalErrorCount: 0, totalWarningCount: 0 },
+      {
+        fatalErrorCount: 0,
+        errorCount: 0,
+        fixableErrorCount: 0,
+        warningCount: 0,
+        fixableWarningCount: 0,
+      },
     );
 
-    if (totalErrorCount === 0 && totalWarningCount === 0) {
+    if (errorCount === 0 && warningCount === 0) {
       logger.info('🎉 No linting errors found.');
     } else {
       logger.info(
         `${
-          totalWarningCount > totalErrorCount ? '🟡' : '🔴'
-        } ${totalErrorCount} error(s) and ${totalWarningCount} warning(s) found.`,
+          warningCount > errorCount ? '🟡' : '🔴'
+        } ${errorCount} error(s) and ${warningCount} warning(s) found.`,
       );
     }
 
@@ -158,6 +176,11 @@ async function main({ logger, options }: ActionParameters) {
           gitBranch: currentGitBranch,
           gitCommitHash: currentGitCommitHash,
           repositoryId: saveRepositoryData.insert_repositories_one.id,
+          fatalErrorCount,
+          errorCount,
+          warningCount,
+          fixableErrorCount,
+          fixableWarningCount,
         },
       },
     );
@@ -180,10 +203,32 @@ async function main({ logger, options }: ActionParameters) {
           }
         `,
         {
-          objects: results.map((result) => ({
-            ...result,
-            analysisId: ANALYSIS_ID,
-          })),
+          objects: results.reduce((fileAnalysisResults, result) => {
+            const ruleViolationsInFile: StoredLinterResult[] =
+              result.messages.map(
+                ({
+                  ruleId,
+                  severity,
+                  line,
+                  endLine,
+                  column,
+                  endColumn,
+                  message,
+                }) => ({
+                  filePath: result.filePath,
+                  ruleId,
+                  severity,
+                  line,
+                  endLine,
+                  column,
+                  endColumn,
+                  message,
+                  analysisId: ANALYSIS_ID,
+                }),
+              );
+
+            return [...fileAnalysisResults, ...ruleViolationsInFile];
+          }, [] as StoredLinterResult[]),
         },
       );
 

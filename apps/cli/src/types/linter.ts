@@ -39,3 +39,14 @@ export interface LinterResult {
 }
 
 export type SimpleLinterResult = Omit<LinterResult, 'source'>;
+
+export interface StoredLinterResult {
+  filePath: string;
+  ruleId: string;
+  severity: number;
+  line: number;
+  endLine: number;
+  column: number;
+  endColumn: number;
+  message: string;
+}

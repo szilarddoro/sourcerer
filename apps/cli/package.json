@@ -14,6 +14,7 @@
   "devDependencies": {
     "@sourcerer/tsconfig": "workspace:*",
     "@types/node": "^18.7.14",
+    "prettier": "^2.7.1",
     "tsup": "^6.2.3",
     "tsx": "^3.9.0",
     "typescript": "^4.8.2"
