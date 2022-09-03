@@ -1,18 +1,30 @@
-import '@fontsource/inter'
-import '@fontsource/inter/500.css'
-import '@fontsource/inter/600.css'
-import '@fontsource/inter/700.css'
-import { AppProps } from 'next/app'
-import Head from 'next/head'
-import NextNProgress from 'nextjs-progressbar'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import '../styles.css'
+import '@fontsource/inter';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import { NextPage } from 'next';
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import NextNProgress from 'nextjs-progressbar';
+import { ReactElement } from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import '../styles.css';
 
 export const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } }
-})
+  defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } },
+});
 
-export default function MyApp({ Component, pageProps }: AppProps) {
+export type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactElement;
+};
+
+export interface MyAppProps extends AppProps {
+  Component: NextPageWithLayout;
+}
+
+export default function MyApp({ Component, pageProps }: MyAppProps) {
+  const getLayout = Component.getLayout ?? ((page: ReactElement) => page);
+
   return (
     <>
       <NextNProgress
@@ -32,8 +44,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       </Head>
 
       <QueryClientProvider client={queryClient}>
-        <Component {...pageProps} />
+        {getLayout(<Component {...pageProps} />)}
       </QueryClientProvider>
     </>
-  )
+  );
 }

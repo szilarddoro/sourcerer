@@ -1,16 +1,17 @@
-import useTranslation from 'next-translate/useTranslation'
-import { useRouter } from 'next/router'
-import type { AnalysisData } from '../../../types/analyses'
-import Card from '../../ui/Card'
-import Chip from '../../ui/Chip'
-import CalendarIcon from '../../ui/icons/CalendarIcon'
-import FolderIcon from '../../ui/icons/FolderIcon'
-import GitBranchIcon from '../../ui/icons/GitBranchIcon'
-import Link, { LinkProps } from '../../ui/Link'
-import LabelledIcon from '../LabelledIcon'
+import useTranslation from 'next-translate/useTranslation';
+import { useRouter } from 'next/router';
+import { twMerge } from 'tailwind-merge';
+import type { AnalysisData } from '../../../types/analyses';
+import Card, { CardProps } from '../../ui/Card';
+import Chip from '../../ui/Chip';
+import CalendarIcon from '../../ui/icons/CalendarIcon';
+import FolderIcon from '../../ui/icons/FolderIcon';
+import GitBranchIcon from '../../ui/icons/GitBranchIcon';
+import Link, { LinkProps } from '../../ui/Link';
+import LabelledIcon from '../LabelledIcon';
 
-export interface AnalysisProps {
-  data: AnalysisData
+export interface AnalysisProps extends Omit<CardProps, 'data'> {
+  data: AnalysisData;
 }
 
 function ExternalLink(props: LinkProps) {
@@ -22,34 +23,42 @@ function ExternalLink(props: LinkProps) {
       onClick={(event) => event.stopPropagation()}
       {...props}
     />
-  )
+  );
 }
 
 export default function Analysis({
   data: {
     id,
     updatedAt,
-    lintingResultsAggregate,
     basePath,
     gitBranch,
-    gitCommitHash
-  }
+    gitCommitHash,
+    errorCount,
+    warningCount,
+  },
+  className,
+  ...props
 }: AnalysisProps) {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation('common');
   const {
-    query: { owner, repository }
-  } = useRouter()
-  const githubBasePath = `https://github.com/${owner}/${repository}`
+    query: { owner, repository },
+  } = useRouter();
+  const githubBasePath = `https://github.com/${owner}/${repository}`;
 
   const formattedCreatedAt = Intl.DateTimeFormat('en-US', {
     dateStyle: 'long',
-    timeStyle: 'short'
-  }).format(new Date(updatedAt))
-
-  const { errorCount, warningCount } = lintingResultsAggregate.aggregate.sum
+    timeStyle: 'short',
+  }).format(new Date(updatedAt));
 
   return (
-    <Card action className="grid grid-flow-row gap-2 justify-items-start">
+    <Card
+      action
+      className={twMerge(
+        'grid grid-flow-row gap-2 justify-items-start',
+        className,
+      )}
+      {...props}
+    >
       <div className="grid grid-flow-row gap-1">
         <strong className="text-lg">{id.split('-')[0]}</strong>
 
@@ -57,18 +66,10 @@ export default function Analysis({
           <div className="grid grid-flow-col gap-2">
             {gitBranch && (
               <LabelledIcon icon={<GitBranchIcon />}>
-                <ExternalLink href={`${githubBasePath}/tree/${gitBranch}`}>
-                  {gitBranch}
-                </ExternalLink>{' '}
+                <span className="font-medium">{gitBranch}</span>{' '}
                 {gitCommitHash && (
-                  <span>
-                    (
-                    <ExternalLink
-                      href={`${githubBasePath}/tree/${gitCommitHash}`}
-                    >
-                      {gitCommitHash}
-                    </ExternalLink>
-                    )
+                  <span className="font-medium">
+                    (<span>{gitCommitHash}</span>)
                   </span>
                 )}
               </LabelledIcon>
@@ -103,5 +104,5 @@ export default function Analysis({
 
       <LabelledIcon icon={<CalendarIcon />}>{formattedCreatedAt}</LabelledIcon>
     </Card>
-  )
+  );
 }

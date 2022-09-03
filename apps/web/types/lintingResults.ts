@@ -1,12 +1,11 @@
 export interface LintingResultData {
-  id: string
-  filePath: string
-  messages: object
-  suppressedMessages: object
-  errorCount: number
-  warningCount: number
-  fixableErrorCount: number
-  fixableWarningCount: number
-  fatalErrorCount: number
-  usedDeprecatedRules: string[]
+  id: string;
+  filePath: string;
+  ruleId: string;
+  severity: number;
+  line: number;
+  endLine: number;
+  column: number;
+  endColumn: number;
+  message: string;
 }

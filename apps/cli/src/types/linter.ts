@@ -40,7 +40,7 @@ export interface LinterResult {
 
 export type SimpleLinterResult = Omit<LinterResult, 'source'>;
 
-export interface StoredLinterResult {
+export interface LintingResultData {
   filePath: string;
   ruleId: string;
   severity: number;

@@ -9,7 +9,7 @@ import executeCommand from './lib/executeCommand';
 import fetchRepository from './lib/fetchRepository';
 import { lintProject } from './lib/linter';
 import nhostClient from './lib/nhostClient';
-import { StoredLinterResult } from './types/linter';
+import { LintingResultData } from './types/linter';
 
 async function cleanup() {
   await fs.rm(CLONE_DIRECTORY, { recursive: true });
@@ -204,7 +204,7 @@ async function main({ logger, options }: ActionParameters) {
         `,
         {
           objects: results.reduce((fileAnalysisResults, result) => {
-            const ruleViolationsInFile: StoredLinterResult[] =
+            const ruleViolationsInFile: LintingResultData[] =
               result.messages.map(
                 ({
                   ruleId,
@@ -228,7 +228,7 @@ async function main({ logger, options }: ActionParameters) {
               );
 
             return [...fileAnalysisResults, ...ruleViolationsInFile];
-          }, [] as StoredLinterResult[]),
+          }, [] as LintingResultData[]),
         },
       );
 
