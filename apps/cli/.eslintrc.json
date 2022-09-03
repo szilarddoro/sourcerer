@@ -1,26 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/eslintrc",
   "root": true,
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
-  "parser": "@typescript-eslint/parser",
-  "env": {
-    "browser": true,
-    "node": true
+  "extends": ["airbnb-base", "airbnb-typescript/base"],
+  "plugins": ["prettier"],
+  "parserOptions": {
+    "project": "./apps/cli/tsconfig.json"
   },
   "rules": {
-    "quotes": ["error", "backtick"],
-    "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      { "ignoreRestSiblings": true }
-    ],
-    "@typescript-eslint/consistent-type-imports": [
-      "warn",
-      { "prefer": "type-imports" }
-    ]
+    "operator-linebreak": "off",
+    "implicit-arrow-linebreak": "off",
+    "no-console": "off"
   }
 }

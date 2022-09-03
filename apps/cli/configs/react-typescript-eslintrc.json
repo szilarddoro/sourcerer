@@ -4,6 +4,8 @@
   "extends": ["airbnb", "airbnb/hooks", "airbnb-typescript"],
   "parser": "@typescript-eslint/parser",
   "rules": {
+    "operator-linebreak": "off",
+    "implicit-arrow-linebreak": "off",
     "react/react-in-jsx-scope": "off",
     "react/require-default-props": "off"
   }

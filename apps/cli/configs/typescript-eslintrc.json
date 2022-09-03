@@ -1,6 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/eslintrc",
   "root": true,
-  "extends": ["airbnb-base", "airbnb-typescript"],
-  "parser": "@typescript-eslint/parser"
+  "extends": ["airbnb-base", "airbnb-typescript/base"],
+  "parser": "@typescript-eslint/parser",
+  "rules": {
+    "operator-linebreak": "off",
+    "implicit-arrow-linebreak": "off"
+  }
 }

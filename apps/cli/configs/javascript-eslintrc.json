@@ -1,5 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/eslintrc",
   "root": true,
-  "extends": "airbnb-base"
+  "extends": "airbnb-base",
+  "rules": {
+    "operator-linebreak": "off",
+    "implicit-arrow-linebreak": "off"
+  }
 }

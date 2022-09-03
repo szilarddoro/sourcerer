@@ -3,6 +3,8 @@
   "root": true,
   "extends": ["airbnb", "airbnb/hooks"],
   "rules": {
+    "operator-linebreak": "off",
+    "implicit-arrow-linebreak": "off",
     "react/react-in-jsx-scope": "off"
   }
 }
