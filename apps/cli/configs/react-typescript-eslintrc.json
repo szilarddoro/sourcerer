@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/eslintrc",
+  "root": true,
+  "extends": ["airbnb", "airbnb/hooks", "airbnb-typescript"],
+  "parser": "@typescript-eslint/parser",
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/require-default-props": "off"
+  }
+}

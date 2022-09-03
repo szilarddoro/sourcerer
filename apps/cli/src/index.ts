@@ -8,9 +8,8 @@ import gql from 'graphql-tag'
 import { tmpdir } from 'os'
 import executeCommand from './lib/executeCommand'
 import fetchRepository from './lib/fetchRepository'
-import installDependencies from './lib/installDependencies'
 import { lintProject } from './lib/linter'
-import { nhostClient } from './lib/nhost'
+import { nhostClient } from './lib/nhostClient'
 
 /**
  * Identifier of the analysis.
@@ -98,16 +97,6 @@ async function main({ logger, options }: ActionParameters) {
 
       return
     }
-  }
-
-  logger.info(`📦 Installing dependencies...`)
-
-  try {
-    await installDependencies(analyzableProjectPath)
-  } catch (error) {
-    logger.error(`🚨 Failed to install dependencies.`, error)
-
-    return
   }
 
   logger.info(`🔍 Looking for problems...`)

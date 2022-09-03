@@ -18,14 +18,25 @@ export function mapLinterResults(
     return []
   }
 
-  const results = JSON.parse(lintCommandOutput) as LinterResult[]
+  console.log(lintCommandOutput)
 
-  return results
-    .filter((result) => result.errorCount > 0 || result.warningCount > 0)
-    .map(({ source: _source, filePath, ...result }) => ({
-      ...result,
-      filePath: filePath.replace(CLONE_DIRECTORY, ``)
-    }))
+  try {
+    const results = JSON.parse(lintCommandOutput) as LinterResult[]
+
+    return results
+      .filter((result) => result.errorCount > 0 || result.warningCount > 0)
+      .map(({ source: _source, filePath, ...result }) => ({
+        ...result,
+        filePath: filePath.replace(CLONE_DIRECTORY, ``)
+      }))
+  } catch (error) {
+    console.error(
+      chalk.red`error:`,
+      error && error instanceof Error ? error.message : error
+    )
+  }
+
+  return []
 }
 
 /**
@@ -35,6 +46,20 @@ export function mapLinterResults(
  * @returns Results of the linter.
  */
 export async function lintProject(path: string) {
+  let isReactProject = false
+
+  try {
+    const { dependencies, peerDependencies } = JSON.parse(
+      await fs.readFile(`${path}/package.json`, {
+        encoding: `utf-8`
+      })
+    )
+
+    isReactProject = Boolean(dependencies?.react || peerDependencies?.react)
+  } catch (error) {
+    console.error(chalk.red`error:`, `🚨 Failed to read package.json.`, error)
+  }
+
   let esLintConfigurationAvailable = false
 
   const files = await fs.readdir(path, { withFileTypes: true })
@@ -71,30 +96,43 @@ export async function lintProject(path: string) {
     (file) => file.isFile() && file.name === `tsconfig.json`
   )
 
-  // Note: By default we are treating project as a JavaScript project
-  let config = `configs/strict-javascript-eslintrc.json`
+  console.log(files)
 
-  if (hasTypeScriptConfiguration) {
-    console.info(chalk.blue`info:`, `📝 TypeScript configuration detected.`)
+  let config = hasTypeScriptConfiguration
+    ? `configs/typescript-eslintrc.json`
+    : `configs/javascript-eslintrc.json`
 
-    config = `configs/strict-typescript-eslintrc.json`
+  if (isReactProject) {
+    config = hasTypeScriptConfiguration
+      ? `configs/react-typescript-eslintrc.json`
+      : `configs/react-javascript-eslintrc.json`
   }
+
+  console.info(
+    chalk.blue`info:`,
+    `📝 Using ${config} based on the detected project setup.`
+  )
 
   // TODO: Take .eslintignore into account
   // TODO: Take the project's ESLint configuration into account - override rules
   // with Sourcerer's strict ESLint rules
 
-  const { stdout, stderr } = await executeCommand(`pnpm`, [
-    `eslint`,
-    `--no-eslintrc`,
-    `--config`,
-    config,
-    `--format`,
-    `json`,
-    `${path}`,
-    `--ext`,
-    `.ts,.tsx,.js,.jsx`
-  ])
+  const { stdout, stderr } = await executeCommand(
+    `pnpm`,
+    [
+      `eslint`,
+      `--no-eslintrc`,
+      `--config`,
+      config,
+      hasTypeScriptConfiguration ? `--parser-options` : null,
+      hasTypeScriptConfiguration ? `project:${path}/tsconfig.json` : null,
+      `--format`,
+      `json`,
+      `${path}`,
+      `--ext`,
+      `.ts,.tsx,.js,.jsx`
+    ].filter(Boolean) as string[]
+  )
 
   return mapLinterResults(stdout.join(``) || stderr.join(``))
 }

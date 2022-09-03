@@ -9,10 +9,13 @@ export default async function installDependencies(path: string) {
     (file) => file.isFile() && file.name === `package-lock.json`
   )
 
-  if (isUsingNpm) {
-    console.info(chalk.blue`info:`, `📝 NPM lock file detected.`)
+  const getMessage = (packageManager: string, command: string) =>
+    `📦 ${packageManager} was detected. Installing dependencies using: ${command}`
 
-    await executeCommand(`yarn`, [`ci`], { cwd: path })
+  if (isUsingNpm) {
+    console.info(chalk.blue`info:`, getMessage(`npm`, `npm ci`))
+
+    await executeCommand(`npm`, [`ci`], { cwd: path })
 
     return
   }
@@ -22,7 +25,10 @@ export default async function installDependencies(path: string) {
   )
 
   if (isUsingYarn) {
-    console.info(chalk.blue`info:`, `📝 Yarn lock file detected.`)
+    console.info(
+      chalk.blue`info:`,
+      getMessage(`yarn`, `yarn install --frozen-lockfile`)
+    )
 
     await executeCommand(`yarn`, [`install`, `--frozen-lockfile`], {
       cwd: path
@@ -36,7 +42,10 @@ export default async function installDependencies(path: string) {
   )
 
   if (isUsingPnpm) {
-    console.info(chalk.blue`info:`, `📝 PNPM lock file detected.`)
+    console.info(
+      chalk.blue`info:`,
+      getMessage(`pnpm`, `pnpm install --frozen-lockfile`)
+    )
 
     await executeCommand(`pnpm`, [`install`, `--frozen-lockfile`], {
       cwd: path
