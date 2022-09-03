@@ -1,11 +1,11 @@
-import { DetailedHTMLProps, HTMLProps } from 'react'
-import { twMerge } from 'tailwind-merge'
-import CircularProgress from '../CircularProgress'
+import { DetailedHTMLProps, HTMLProps } from 'react';
+import { twMerge } from 'tailwind-merge';
+import CircularProgress from '../CircularProgress';
 
 export interface ButtonProps
   extends DetailedHTMLProps<HTMLProps<HTMLButtonElement>, HTMLButtonElement> {
-  type?: 'button' | 'submit' | 'reset'
-  loading?: boolean
+  type?: 'button' | 'submit' | 'reset';
+  loading?: boolean;
 }
 
 export default function Button({
@@ -18,8 +18,8 @@ export default function Button({
   return (
     <button
       className={twMerge(
-        'inline-grid grid-flow-col gap-2 items-center bg-blue-500 hover:bg-blue-600 motion-safe:transition-all focus:bg-blue-600 focus:outline-none active:ring-4 active:ring-blue-200 dark:active:ring-opacity-50 text-white font-medium border-none rounded-md text-sm p-3 justify-center disabled:bg-slate-300 disabled:text-slate-500',
-        className
+        'inline-grid grid-flow-col gap-2 items-center bg-blue-500 hover:bg-blue-600 motion-safe:transition-all focus:bg-blue-600 focus:outline-none active:ring-4 active:ring-blue-200 dark:active:ring-opacity-50 text-white font-medium border-none rounded-md text-sm p-3 justify-center disabled:bg-slate-300 disabled:text-slate-500 motion-safe:duration-100',
+        className,
       )}
       {...props}
       disabled={props.disabled || loading}
@@ -34,5 +34,5 @@ export default function Button({
 
       {children}
     </button>
-  )
+  );
 }

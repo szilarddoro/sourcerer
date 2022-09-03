@@ -1,2 +1,2 @@
-export * from './FolderIcon'
-export { default } from './FolderIcon'
+export * from './FolderIcon';
+export { default } from './FolderIcon';

@@ -1,5 +1,5 @@
-import { DetailedHTMLProps, HTMLProps } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { DetailedHTMLProps, HTMLProps } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export interface FolderIconProps
   extends Omit<
@@ -26,5 +26,5 @@ export default function FolderIcon({ className, ...props }: FolderIconProps) {
         fill="currentColor"
       />
     </svg>
-  )
+  );
 }

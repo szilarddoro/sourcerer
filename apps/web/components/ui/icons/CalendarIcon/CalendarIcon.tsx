@@ -1,5 +1,5 @@
-import { DetailedHTMLProps, HTMLProps } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { DetailedHTMLProps, HTMLProps } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export interface CalendarIconProps
   extends Omit<
@@ -29,5 +29,5 @@ export default function CalendarIcon({
         fill="currentColor"
       />
     </svg>
-  )
+  );
 }

@@ -1,15 +1,20 @@
-import { ForwardedRef, forwardRef, InputHTMLAttributes, ReactNode } from 'react'
-import { twMerge } from 'tailwind-merge'
+import {
+  ForwardedRef,
+  forwardRef,
+  InputHTMLAttributes,
+  ReactNode,
+} from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label?: ReactNode
-  helperText?: string
-  error?: boolean
+  label?: ReactNode;
+  helperText?: string;
+  error?: boolean;
 }
 
 export default forwardRef(function Input(
   { className, label, error, helperText, ...props }: InputProps,
-  ref: ForwardedRef<HTMLInputElement>
+  ref: ForwardedRef<HTMLInputElement>,
 ) {
   return (
     <div className="inline-grid items-center grid-flow-row gap-0.5">
@@ -17,7 +22,7 @@ export default forwardRef(function Input(
         <label
           className={twMerge(
             'text-sm font-medium justify-self-start',
-            error && 'text-red-500'
+            error && 'text-red-500',
           )}
           htmlFor={props.id}
         >
@@ -34,7 +39,7 @@ export default forwardRef(function Input(
         className={twMerge(
           'border-2 border-slate-200 dark:border-white dark:border-opacity-5 dark:bg-slate-800 dark:bg-opacity-50 focus:border-blue-500 focus:outline-none p-3 rounded-md text-sm',
           error && 'border-red-500 focus:border-red-600',
-          className
+          className,
         )}
         {...props}
         ref={ref}
@@ -43,11 +48,11 @@ export default forwardRef(function Input(
       <p
         className={twMerge(
           'text-xs text-slate-500 dark:text-white dark:text-opacity-50',
-          error && 'text-red-500'
+          error && 'text-red-500',
         )}
       >
         {helperText}
       </p>
     </div>
-  )
-})
+  );
+});

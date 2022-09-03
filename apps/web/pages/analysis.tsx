@@ -1,22 +1,22 @@
-import { useRouter } from 'next/router'
-import { useForm } from 'react-hook-form'
-import Button from '../components/ui/Button'
-import Container from '../components/ui/Container'
-import Heading from '../components/ui/Heading'
-import Input from '../components/ui/Input'
-import Layout from '../components/ui/Layout'
+import { useRouter } from 'next/router';
+import { useForm } from 'react-hook-form';
+import Button from '../components/ui/Button';
+import Container from '../components/ui/Container';
+import Heading from '../components/ui/Heading';
+import Input from '../components/ui/Input';
+import Layout from '../components/ui/Layout';
 
 export interface AnalyzeFormData {
-  owner: string
-  repository: string
+  owner: string;
+  repository: string;
 }
 
 export default function HomePage() {
-  const { handleSubmit: onSubmit, register } = useForm<AnalyzeFormData>()
-  const router = useRouter()
+  const { handleSubmit: onSubmit, register } = useForm<AnalyzeFormData>();
+  const router = useRouter();
 
   async function handleSubmit(values: AnalyzeFormData) {
-    router.push(`/${values.owner}/${values.repository}`)
+    router.push(`/${values.owner}/${values.repository}`);
   }
 
   return (
@@ -47,5 +47,5 @@ export default function HomePage() {
         </form>
       </Container>
     </Layout>
-  )
+  );
 }

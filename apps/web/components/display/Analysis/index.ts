@@ -1,2 +1,2 @@
-export * from './Analysis'
-export { default } from './Analysis'
+export * from './Analysis';
+export { default } from './Analysis';

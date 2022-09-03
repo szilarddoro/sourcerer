@@ -1,5 +1,5 @@
-import { DetailedHTMLProps, HTMLProps } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { DetailedHTMLProps, HTMLProps } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export interface CircularProgressProps
   extends Omit<
@@ -36,5 +36,5 @@ export default function CircularProgress({
         className="opacity-75"
       />
     </svg>
-  )
+  );
 }

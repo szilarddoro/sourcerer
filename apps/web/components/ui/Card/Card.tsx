@@ -20,7 +20,7 @@ export default function Card({
       className={twMerge(
         'p-4 bg-white dark:bg-slate-900 border-2 rounded-md dark:border-white dark:border-opacity-5 border-slate-200',
         action &&
-          'motion-safe:transition-colors dark:hover:bg-slate-800 dark:hover:bg-opacity-50 hover:bg-slate-50',
+          'motion-safe:transition-colors motion-safe:duration-100 dark:hover:bg-slate-800 dark:hover:bg-opacity-50 hover:bg-slate-50',
         className,
       )}
       {...props}

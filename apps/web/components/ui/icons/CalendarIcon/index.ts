@@ -1,2 +1,2 @@
-export * from './CalendarIcon'
-export { default } from './CalendarIcon'
+export * from './CalendarIcon';
+export { default } from './CalendarIcon';
