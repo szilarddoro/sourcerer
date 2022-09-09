@@ -13,7 +13,6 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "@sourcerer/eslint": "workspace:*",
     "express": "^4.18.1",
     "prettier": "latest",
     "turbo": "latest"
