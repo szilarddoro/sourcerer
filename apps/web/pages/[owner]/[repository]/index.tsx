@@ -43,7 +43,7 @@ function RepositoryDetailsPage({
       <Container className="justify-items-start">
         <Heading>Not Found</Heading>
 
-        <p>This repository does not exist.</p>
+        <p className="opacity-60">This repository does not exist.</p>
 
         <Link href="/" className="text-sm text-blue-500 dark:text-blue-300">
           Go back to home page
