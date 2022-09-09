@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@sourcerer/eslint": "workspace:*",
+    "express": "^4.18.1",
     "prettier": "latest",
     "turbo": "latest"
   },
@@ -21,6 +22,5 @@
     "npm": ">=7.0.0",
     "node": ">=14.0.0"
   },
-  "dependencies": {},
   "packageManager": "pnpm@7.5.0"
 }
