@@ -73,11 +73,14 @@ function IndexPage({ data, error }: IndexPageProps) {
                 className="grid grid-flow-row col-span-1 gap-2 justify-items-start"
               >
                 {data.avatar ? (
-                  <img
-                    src={data.avatar}
-                    alt={`Avatar of ${owner}`}
-                    className="overflow-hidden rounded-lg w-11 h-11"
-                  />
+                  <picture>
+                    <source srcSet={data.avatar} type="image/webp" />
+                    <img
+                      src={data.avatar}
+                      alt={`Avatar of ${owner}`}
+                      className="overflow-hidden rounded-lg w-11 h-11"
+                    />
+                  </picture>
                 ) : (
                   <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
                 )}

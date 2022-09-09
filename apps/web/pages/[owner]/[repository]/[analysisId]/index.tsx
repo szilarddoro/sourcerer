@@ -80,11 +80,14 @@ function AnalysisDetailsPage({
         className="grid items-center justify-start gap-3 sm:grid-flow-col"
       >
         {repositoryData?.avatar ? (
-          <img
-            src={repositoryData?.avatar}
-            alt={`Avatar of ${owner}`}
-            className="overflow-hidden rounded-lg w-11 h-11"
-          />
+          <picture>
+            <source srcSet={repositoryData.avatar} type="image/webp" />
+            <img
+              src={repositoryData.avatar}
+              alt={`Avatar of ${owner}`}
+              className="overflow-hidden rounded-lg w-11 h-11"
+            />
+          </picture>
         ) : (
           <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
         )}
@@ -171,7 +174,7 @@ function AnalysisDetailsPage({
 
         <Card className="grid grid-flow-row gap-4">
           {data.lintingResults.length === 0 && (
-            <p>🎉 This version didn't violate any linter rules.</p>
+            <p>🎉 This version didn&apos;t violate any linter rules.</p>
           )}
 
           {data.lintingResults.map(
