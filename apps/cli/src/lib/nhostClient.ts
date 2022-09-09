@@ -1,8 +1,8 @@
 import { NhostClient } from '@nhost/nhost-js';
 
 const nhostClient = new NhostClient({
-  subdomain: 'ybmwhglwjenvssujfirr',
-  region: 'eu-central-1',
+  subdomain: process.env.NHOST_SUBDOMAIN,
+  region: process.env.NHOST_REGION,
   adminSecret: process.env.NHOST_ADMIN_SECRET,
 });
 

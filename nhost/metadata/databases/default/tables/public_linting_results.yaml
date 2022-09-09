@@ -1,0 +1,42 @@
+table:
+  name: linting_results
+  schema: public
+configuration:
+  column_config:
+    analysis_id:
+      custom_name: analysisId
+    end_column:
+      custom_name: endColumn
+    end_line:
+      custom_name: endLine
+    file_path:
+      custom_name: filePath
+    rule_id:
+      custom_name: ruleId
+  custom_column_names:
+    analysis_id: analysisId
+    end_column: endColumn
+    end_line: endLine
+    file_path: filePath
+    rule_id: ruleId
+  custom_root_fields: {}
+object_relationships:
+  - name: analyasis
+    using:
+      foreign_key_constraint_on: analysis_id
+select_permissions:
+  - role: public
+    permission:
+      columns:
+        - id
+        - rule_id
+        - severity
+        - line
+        - end_line
+        - column
+        - end_column
+        - file_path
+        - message
+        - analysis_id
+      filter: {}
+      allow_aggregations: true

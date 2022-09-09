@@ -1,0 +1,70 @@
+table:
+  name: analyses
+  schema: public
+configuration:
+  column_config:
+    base_path:
+      custom_name: basePath
+    created_at:
+      custom_name: createdAt
+    error_count:
+      custom_name: errorCount
+    fatal_error_count:
+      custom_name: fatalErrorCount
+    fixable_error_count:
+      custom_name: fixableErrorCount
+    fixable_warning_count:
+      custom_name: fixableWarningCount
+    git_branch:
+      custom_name: gitBranch
+    git_commit_hash:
+      custom_name: gitCommitHash
+    repository_id:
+      custom_name: repositoryId
+    updated_at:
+      custom_name: updatedAt
+    warning_count:
+      custom_name: warningCount
+  custom_column_names:
+    base_path: basePath
+    created_at: createdAt
+    error_count: errorCount
+    fatal_error_count: fatalErrorCount
+    fixable_error_count: fixableErrorCount
+    fixable_warning_count: fixableWarningCount
+    git_branch: gitBranch
+    git_commit_hash: gitCommitHash
+    repository_id: repositoryId
+    updated_at: updatedAt
+    warning_count: warningCount
+  custom_root_fields: {}
+object_relationships:
+  - name: repository
+    using:
+      foreign_key_constraint_on: repository_id
+array_relationships:
+  - name: linting_results
+    using:
+      foreign_key_constraint_on:
+        column: analysis_id
+        table:
+          name: linting_results
+          schema: public
+select_permissions:
+  - role: public
+    permission:
+      columns:
+        - id
+        - created_at
+        - updated_at
+        - base_path
+        - repository_id
+        - git_branch
+        - git_commit_hash
+        - error_count
+        - fatal_error_count
+        - fixable_error_count
+        - fixable_warning_count
+        - warning_count
+      filter: {}
+      allow_aggregations: true

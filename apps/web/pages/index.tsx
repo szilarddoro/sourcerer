@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
+import { ReactElement } from 'react';
 import Card from '../components/ui/Card';
 import Chip from '../components/ui/Chip';
 import Container from '../components/ui/Container';
@@ -11,10 +12,24 @@ import type { RepositoryData } from '../types/repositories';
 
 export interface IndexPageProps {
   data: RepositoryData[];
+  error?: Error;
 }
 
-export default function IndexPage({ data }: IndexPageProps) {
+function IndexPage({ data, error }: IndexPageProps) {
   const { t } = useTranslation('common');
+
+  if (error) {
+    return (
+      <Container>
+        <Heading variant="h1">Browse results</Heading>
+
+        <p className="text-red-500">
+          <strong>Error:</strong>{' '}
+          {error.message || 'Unknown error occurred. Please try again later.'}
+        </p>
+      </Container>
+    );
+  }
 
   const distinctReposByOwner = data.reduce(
     (reposByOwner, { owner, name, avatar }) => {
@@ -36,48 +51,54 @@ export default function IndexPage({ data }: IndexPageProps) {
   const distinctOwners = Array.from(distinctReposByOwner.keys()).sort();
 
   return (
-    <Layout title="Home">
-      <Container className="gap-4">
-        <Heading variant="h1">Browse results</Heading>
+    <Container className="gap-4">
+      <Heading variant="h1">Browse results</Heading>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {distinctOwners.map((owner) => {
-            const data = distinctReposByOwner.get(owner);
+      {distinctOwners.length === 0 && (
+        <p className="opacity-60">No analyses are available.</p>
+      )}
 
-            if (!data) {
-              return null;
-            }
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        {distinctOwners.map((owner) => {
+          const data = distinctReposByOwner.get(owner);
 
-            return (
-              <Link href={`/${owner}`} key={owner}>
-                <Card
-                  action
-                  className="grid grid-flow-row col-span-1 gap-2 justify-items-start"
-                >
-                  {data.avatar ? (
-                    <img
-                      src={data.avatar}
-                      alt={`Avatar of ${owner}`}
-                      className="overflow-hidden rounded-lg w-11 h-11"
-                    />
-                  ) : (
-                    <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
-                  )}
+          if (!data) {
+            return null;
+          }
 
-                  <strong className="text-lg">{owner}</strong>
+          return (
+            <Link href={`/${owner}`} key={owner}>
+              <Card
+                action
+                className="grid grid-flow-row col-span-1 gap-2 justify-items-start"
+              >
+                {data.avatar ? (
+                  <img
+                    src={data.avatar}
+                    alt={`Avatar of ${owner}`}
+                    className="overflow-hidden rounded-lg w-11 h-11"
+                  />
+                ) : (
+                  <div className="overflow-hidden rounded-lg w-11 h-11 bg-slate-300" />
+                )}
 
-                  <Chip>
-                    {t('projects', { count: data.repositories.length })}
-                  </Chip>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-      </Container>
-    </Layout>
+                <strong className="text-lg">{owner}</strong>
+
+                <Chip>
+                  {t('projects', { count: data.repositories.length })}
+                </Chip>
+              </Card>
+            </Link>
+          );
+        })}
+      </div>
+    </Container>
   );
 }
+
+IndexPage.getLayout = function IndexPage(page: ReactElement) {
+  return <Layout title="Home">{page}</Layout>;
+};
 
 export async function getServerSideProps() {
   const { data, error } = await nhostClient.graphql.request(
@@ -94,6 +115,10 @@ export async function getServerSideProps() {
   );
 
   if (error) {
+    if (Array.isArray(error)) {
+      return { props: { error: error[0], data: [] } };
+    }
+
     return { props: { error, data: [] } };
   }
 
@@ -103,3 +128,5 @@ export async function getServerSideProps() {
 
   return { props: {} };
 }
+
+export default IndexPage;
