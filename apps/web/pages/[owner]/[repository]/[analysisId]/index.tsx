@@ -185,7 +185,6 @@ function AnalysisDetailsPage({
             Most common lint rule violation:{' '}
             <ESLintLink>
               {
-                // find a better way to do this
                 [...data.lintingResults].sort((a, b) => b.count - a.count)[0]
                   .ruleId
               }
