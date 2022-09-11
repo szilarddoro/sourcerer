@@ -20,7 +20,6 @@ function ExternalLink(props: LinkProps) {
       className="text-blue-500 dark:text-blue-300 hover:underline"
       target="_blank"
       rel="noopener noreferrer"
-      onClick={(event) => event.stopPropagation()}
       {...props}
     />
   );
@@ -52,24 +51,48 @@ export default function Analysis({
 
   return (
     <Card
-      action
       className={twMerge(
-        'grid grid-flow-row gap-2 justify-items-start',
+        'grid grid-cols-2 gap-1 justify-items-start',
         className,
       )}
       {...props}
     >
-      <div className="grid grid-flow-row gap-1">
-        <strong className="text-lg">{id.split('-')[0]}</strong>
+      <Link
+        className="text-blue-500 dark:text-blue-400 hover:underline"
+        href={`/${owner}/${repository}/${id}`}
+      >
+        <strong className="col-span-1 text-lg">{id.split('-')[0]}</strong>
+      </Link>
 
+      <div className="grid items-center justify-start w-full grid-flow-col col-span-2 gap-2 md:col-span-1 md:justify-end">
+        {errorCount > 0 && (
+          <Chip level="error">{t('errors', { count: errorCount })}</Chip>
+        )}
+
+        {warningCount > 0 && (
+          <Chip level="warning">{t('warnings', { count: warningCount })}</Chip>
+        )}
+
+        {!errorCount && !warningCount && <Chip level="success">Success</Chip>}
+      </div>
+
+      <div className="justify-start col-span-2">
         {(gitBranch || basePath) && (
           <div className="grid grid-flow-col gap-2">
             {gitBranch && (
               <LabelledIcon icon={<GitBranchIcon />}>
-                <span className="font-medium">{gitBranch}</span>{' '}
+                <ExternalLink href={`${githubBasePath}/tree/${gitBranch}`}>
+                  {gitBranch}
+                </ExternalLink>{' '}
                 {gitCommitHash && (
-                  <span className="font-medium">
-                    (<span>{gitCommitHash}</span>)
+                  <span>
+                    (
+                    <ExternalLink
+                      href={`${githubBasePath}/tree/${gitCommitHash}`}
+                    >
+                      {gitCommitHash}
+                    </ExternalLink>
+                    )
                   </span>
                 )}
               </LabelledIcon>
@@ -90,19 +113,9 @@ export default function Analysis({
         )}
       </div>
 
-      <div className="grid items-center justify-start grid-flow-col gap-2">
-        {errorCount > 0 && (
-          <Chip level="error">{t('errors', { count: errorCount })}</Chip>
-        )}
-
-        {warningCount > 0 && (
-          <Chip level="warning">{t('warnings', { count: warningCount })}</Chip>
-        )}
-
-        {!errorCount && !warningCount && <Chip level="success">Success</Chip>}
-      </div>
-
-      <LabelledIcon icon={<CalendarIcon />}>{formattedCreatedAt}</LabelledIcon>
+      <LabelledIcon className="col-span-2" icon={<CalendarIcon />}>
+        {formattedCreatedAt}
+      </LabelledIcon>
     </Card>
   );
 }

@@ -8,4 +8,5 @@ export interface LintingResultData {
   column: number;
   endColumn: number;
   message: string;
+  count: number;
 }

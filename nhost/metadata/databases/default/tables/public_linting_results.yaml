@@ -24,6 +24,12 @@ object_relationships:
   - name: analyasis
     using:
       foreign_key_constraint_on: analysis_id
+computed_fields:
+  - name: count
+    definition:
+      function:
+        name: count_in_result
+        schema: public
 select_permissions:
   - role: public
     permission:
@@ -38,5 +44,7 @@ select_permissions:
         - file_path
         - message
         - analysis_id
+      computed_fields:
+        - count
       filter: {}
       allow_aggregations: true

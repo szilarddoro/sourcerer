@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 import { NextPageContext } from 'next';
-import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import { ReactElement } from 'react';
+import { PropsWithChildren, ReactElement } from 'react';
+import { twMerge } from 'tailwind-merge';
 import LabelledIcon from '../../../../components/display/LabelledIcon';
 import Card from '../../../../components/ui/Card';
 import Chip from '../../../../components/ui/Chip';
@@ -23,15 +23,35 @@ export interface AnalysisDetailsPageProps {
   notFound?: boolean;
 }
 
-function ExternalLink(props: LinkProps) {
+function ExternalLink({ className, ...props }: LinkProps) {
   return (
     <Link
-      className="text-sm text-blue-500 dark:text-blue-300 hover:underline"
+      className={twMerge(
+        'text-blue-500 dark:text-blue-300 hover:underline',
+        className,
+      )}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={(event) => event.stopPropagation()}
       {...props}
     />
+  );
+}
+
+function ESLintLink({ children }: PropsWithChildren<unknown>) {
+  if (typeof children !== 'string') {
+    return null;
+  }
+
+  const isCustomESLintRule = new RegExp(/^.*\/.*$/).test(children);
+
+  if (isCustomESLintRule) {
+    return <span>{children}</span>;
+  }
+
+  return (
+    <ExternalLink href={`https://eslint.org/docs/latest/rules/${children}`}>
+      {children}
+    </ExternalLink>
   );
 }
 
@@ -41,7 +61,6 @@ function AnalysisDetailsPage({
   repositoryData,
   notFound,
 }: AnalysisDetailsPageProps) {
-  const { t } = useTranslation('common');
   const {
     query: { owner, repository },
   } = useRouter();
@@ -117,15 +136,15 @@ function AnalysisDetailsPage({
       <section className="grid gap-2">
         <Heading variant="h2">Details</Heading>
 
-        <Card className="grid gap-2">
-          <div className="grid justify-start grid-flow-col gap-2">
+        <Card className="grid grid-cols-2 gap-2 text-sm">
+          <div className="grid justify-start grid-flow-col col-span-2 gap-2 md:col-span-1">
             {data.gitBranch && (
-              <LabelledIcon icon={<GitBranchIcon />}>
+              <LabelledIcon className="text-sm" icon={<GitBranchIcon />}>
                 <ExternalLink href={`${githubBasePath}/tree/${data.gitBranch}`}>
                   {data.gitBranch}
                 </ExternalLink>{' '}
                 {data.gitCommitHash && (
-                  <span className="text-sm">
+                  <span>
                     (
                     <ExternalLink
                       href={`${githubBasePath}/tree/${data.gitCommitHash}`}
@@ -151,7 +170,7 @@ function AnalysisDetailsPage({
             )}
           </div>
 
-          <div className="grid justify-start grid-flow-col gap-1">
+          <div className="grid justify-start grid-flow-col col-span-2 gap-1 md:justify-end md:col-span-1">
             <Chip level="error">Total errors: {data.errorCount}</Chip>
             <Chip level="warning">Total warnings: {data.warningCount}</Chip>
             {data.fixableErrorCount + data.fixableWarningCount > 0 && (
@@ -162,9 +181,19 @@ function AnalysisDetailsPage({
             )}
           </div>
 
+          <div className="col-span-2">
+            Most common lint rule violation:{' '}
+            <ESLintLink>
+              {
+                // find a better way to do this
+                [...data.lintingResults].sort((a, b) => b.count - a.count)[0]
+                  .ruleId
+              }
+            </ESLintLink>
+          </div>
+
           <ul>
             <li>Trend compared to previous analysis</li>
-            <li>Most common lint rule validation</li>
           </ul>
         </Card>
       </section>
@@ -194,14 +223,7 @@ function AnalysisDetailsPage({
                   </div>
 
                   <p className="text-sm">
-                    {message || ''} (
-                    {/* Note: This might not necessarily be an ESLint rule. */}
-                    <ExternalLink
-                      href={`https://eslint.org/docs/latest/rules/${ruleId}`}
-                    >
-                      {ruleId}
-                    </ExternalLink>
-                    )
+                    {message || ''} (<ESLintLink>{ruleId}</ESLintLink>)
                   </p>
                 </div>
               );
@@ -260,6 +282,7 @@ export async function getServerSideProps(context: NextPageContext) {
             message
             line
             column
+            count
           }
         }
       }
@@ -269,10 +292,14 @@ export async function getServerSideProps(context: NextPageContext) {
 
   if (error) {
     if (Array.isArray(error)) {
-      return { props: { error: error[0], repository: null } };
+      return { props: { error: error[0], data: null } };
     }
 
-    return { props: { error, data: null } };
+    if (error instanceof Error) {
+      return { props: { error: error.message, data: null } };
+    }
+
+    return { props: { error: 'Unknown error occurred', data: null } };
   }
 
   if (data && (!data.analysis || !data.repository)) {

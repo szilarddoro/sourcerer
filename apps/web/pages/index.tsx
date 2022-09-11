@@ -122,7 +122,11 @@ export async function getServerSideProps() {
       return { props: { error: error[0], data: [] } };
     }
 
-    return { props: { error, data: [] } };
+    if (error instanceof Error) {
+      return { props: { error: error.message, data: [] } };
+    }
+
+    return { props: { error: 'Unknown error occurred', data: [] } };
   }
 
   if (data) {

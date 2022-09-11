@@ -25,8 +25,6 @@ function RepositoryDetailsPage({
     query: { owner, repository },
   } = useRouter();
 
-  console.log(error);
-
   if (error) {
     return (
       <Container>
@@ -90,12 +88,7 @@ function RepositoryDetailsPage({
           <p className="text-slate-500">No analysis results found.</p>
         ) : (
           data.analyses.map((analysis) => (
-            <Link
-              href={`/${owner}/${repository}/${analysis.id}`}
-              key={analysis.id}
-            >
-              <Analysis data={analysis} />
-            </Link>
+            <Analysis data={analysis} key={analysis.id} />
           ))
         )}
       </div>
@@ -144,10 +137,14 @@ export async function getServerSideProps(context: NextPageContext) {
 
   if (error) {
     if (Array.isArray(error)) {
-      return { props: { error: error[0], repository: null } };
+      return { props: { error: error[0], data: null } };
     }
 
-    return { props: { error, repository: null } };
+    if (error instanceof Error) {
+      return { props: { error: error.message, data: null } };
+    }
+
+    return { props: { error: 'Unknown error occurred', data: null } };
   }
 
   if (data && !data.repository) {

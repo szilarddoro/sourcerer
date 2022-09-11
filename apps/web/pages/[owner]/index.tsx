@@ -144,10 +144,14 @@ export async function getServerSideProps(context: NextPageContext) {
 
   if (error) {
     if (Array.isArray(error)) {
-      return { props: { error: error[0], repository: null } };
+      return { props: { error: error[0], data: null } };
     }
 
-    return { props: { error, data: [] } };
+    if (error instanceof Error) {
+      return { props: { error: error.message, data: null } };
+    }
+
+    return { props: { error: 'Unknown error occurred', data: null } };
   }
 
   if (data && data.repositories.length === 0) {
