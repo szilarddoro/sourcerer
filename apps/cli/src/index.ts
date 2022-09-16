@@ -19,7 +19,7 @@ async function cleanup() {
 }
 
 async function main({ logger, options }: ActionParameters) {
-  const { owner, repo, base } = options;
+  const { owner, repo, base, verbose } = options;
 
   if (!owner || !repo) {
     logger.error(
@@ -131,6 +131,47 @@ async function main({ logger, options }: ActionParameters) {
       );
     }
 
+    const { data: latestAnalysesResult, error: latestAnalysesResultError } =
+      await nhostClient.graphql.request(
+        gql`
+          query GetLatestAnalysis($owner: String!, $name: String!) {
+            analyses(
+              where: {
+                repository: { owner: { _eq: $owner }, name: { _eq: $name } }
+              }
+              order_by: { createdAt: desc }
+              limit: 1
+            ) {
+              errorCount
+              fatalErrorCount
+              warningCount
+            }
+          }
+        `,
+        {
+          owner,
+          name: repo,
+        },
+      );
+
+    let latestAnalysisResultStatistics = null;
+
+    if (latestAnalysesResultError && verbose) {
+      logger.error(
+        '🚨 Failed to retrieve information about the latest analyses.',
+        latestAnalysesResultError,
+      );
+    }
+
+    if (!latestAnalysesResultError) {
+      const { analyses } = latestAnalysesResult;
+
+      if (analyses.length > 0) {
+        const [latestAnalysis] = analyses;
+        latestAnalysisResultStatistics = latestAnalysis;
+      }
+    }
+
     const { data: saveRepositoryData, error: saveRepositoryError } =
       await nhostClient.graphql.request(
         gql`
@@ -181,6 +222,13 @@ async function main({ logger, options }: ActionParameters) {
           warningCount,
           fixableErrorCount,
           fixableWarningCount,
+          errorCountDelta:
+            errorCount - (latestAnalysisResultStatistics?.errorCount || 0),
+          fatalErrorCountDelta:
+            fatalErrorCount -
+            (latestAnalysisResultStatistics?.fatalErrorCount || 0),
+          warningCountDelta:
+            warningCount - (latestAnalysisResultStatistics?.warningCount || 0),
         },
       },
     );

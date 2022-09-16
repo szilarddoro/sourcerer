@@ -9,8 +9,12 @@ configuration:
       custom_name: createdAt
     error_count:
       custom_name: errorCount
+    error_count_delta:
+      custom_name: errorCountDelta
     fatal_error_count:
       custom_name: fatalErrorCount
+    fatal_error_count_delta:
+      custom_name: fatalErrorCountDelta
     fixable_error_count:
       custom_name: fixableErrorCount
     fixable_warning_count:
@@ -25,11 +29,15 @@ configuration:
       custom_name: updatedAt
     warning_count:
       custom_name: warningCount
+    warning_count_delta:
+      custom_name: warningCountDelta
   custom_column_names:
     base_path: basePath
     created_at: createdAt
     error_count: errorCount
+    error_count_delta: errorCountDelta
     fatal_error_count: fatalErrorCount
+    fatal_error_count_delta: fatalErrorCountDelta
     fixable_error_count: fixableErrorCount
     fixable_warning_count: fixableWarningCount
     git_branch: gitBranch
@@ -37,6 +45,7 @@ configuration:
     repository_id: repositoryId
     updated_at: updatedAt
     warning_count: warningCount
+    warning_count_delta: warningCountDelta
   custom_root_fields: {}
 object_relationships:
   - name: repository
@@ -54,17 +63,20 @@ select_permissions:
   - role: public
     permission:
       columns:
-        - id
-        - created_at
-        - updated_at
         - base_path
-        - repository_id
-        - git_branch
-        - git_commit_hash
+        - created_at
         - error_count
+        - error_count_delta
         - fatal_error_count
+        - fatal_error_count_delta
         - fixable_error_count
         - fixable_warning_count
+        - git_branch
+        - git_commit_hash
+        - id
+        - repository_id
+        - updated_at
         - warning_count
+        - warning_count_delta
       filter: {}
       allow_aggregations: true

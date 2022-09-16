@@ -9,6 +9,7 @@
   "rules": {
     "operator-linebreak": "off",
     "implicit-arrow-linebreak": "off",
-    "no-console": "off"
+    "no-console": "off",
+    "object-curly-newline": "off"
   }
 }
