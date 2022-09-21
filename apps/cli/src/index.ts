@@ -15,7 +15,7 @@ async function cleanup() {
   await fs.rm(CLONE_DIRECTORY, { recursive: true });
 
   console.info(`${chalk.blue`info:`} 🧹 Project cleanup successful.`);
-  console.info('\nSee you later! 👋 ');
+  console.info('\nSee you later! 👋');
 }
 
 async function main({ logger, options }: ActionParameters) {
